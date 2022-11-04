@@ -46,3 +46,4 @@ ChessAI/.vs/ChessAI/v16/.suo
 *.txt
 *.iobj
 *.idb
+*.cmake

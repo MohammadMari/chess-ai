@@ -6,11 +6,14 @@ using namespace sf;
 
 class ChessBoard {
 public:
-	SIDE GetcurTurn();
-	void SwapcurTurn();
-	void DisplayBoard(RenderWindow &window);
 	ChessBoard();
+	SIDE GetcurTurn();
+	SIDE SwapCurTurn();
+	void DisplayBoard(RenderWindow& window);
+	void ProcessClickEvent(int x, int y);
 private:
-	SIDE curTurn = NONE;
-	ChessPiece piecePos[8][8];
+	SIDE curTurn = WHITE;
+	SIDE userSide = WHITE; // keep white for now, later we make it so that it supports both
+	ChessPiece** piecePos[8];
+	ChessPiece* selectedPiece = nullptr;
 };
