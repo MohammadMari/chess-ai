@@ -15,6 +15,21 @@ ChessBoard::ChessBoard()
 		piecePos[i] = new ChessPiece*[8];
 	}
 
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			piecePos[i][j] = new Empty(Pos(i, j), NodeLabel(Pos(i, j)));
+		}
+	}
+
+	free(piecePos[0][0]);
+	free(piecePos[1][0]);
+	free(piecePos[2][0]);
+	free(piecePos[3][0]);
+	free(piecePos[4][0]);
+	free(piecePos[5][0]);
+	free(piecePos[6][0]);
+	free(piecePos[7][0]);
+
 	piecePos[0][0] = new Rook(BLACK, Pos(0, 0), NodeLabel(Pos(0,0)));
 	piecePos[1][0] = new Knight(BLACK, Pos(1, 0), NodeLabel(Pos(1, 0)));
 	piecePos[2][0] = new Bishop(BLACK, Pos(2, 0), NodeLabel(Pos(2, 0)));
@@ -25,10 +40,22 @@ ChessBoard::ChessBoard()
 	piecePos[7][0] = new Rook(BLACK, Pos(7, 0), NodeLabel(Pos(7, 0)));
 
 	for (int i = 0; i < 8; i++) {
+		free(piecePos[i][1]);
+		free(piecePos[i][6]);
 		piecePos[i][1] = new Pawn(BLACK, Pos(i, 1), NodeLabel(Pos(i, 1)));
 		piecePos[i][6] = new Pawn(WHITE, Pos(i, 6), NodeLabel(Pos(i, 6)));
 	}
-	
+
+
+	free(piecePos[0][7]);
+	free(piecePos[1][7]);
+	free(piecePos[2][7]);
+	free(piecePos[3][7]);
+	free(piecePos[4][7]);
+	free(piecePos[5][7]);
+	free(piecePos[6][7]);
+	free(piecePos[7][7]);
+
 	piecePos[0][7] = new Rook(WHITE, Pos(0, 7), NodeLabel(Pos(0, 7)));
 	piecePos[1][7] = new Knight(WHITE, Pos(1, 7), NodeLabel(Pos(1, 7)));
 	piecePos[2][7] = new Bishop(WHITE, Pos(2, 7), NodeLabel(Pos(2, 7)));
@@ -37,14 +64,6 @@ ChessBoard::ChessBoard()
 	piecePos[5][7] = new Bishop(WHITE, Pos(5, 7), NodeLabel(Pos(5, 7)));
 	piecePos[6][7] = new Knight(WHITE, Pos(6, 7), NodeLabel(Pos(6, 7)));
 	piecePos[7][7] = new Rook(WHITE, Pos(7, 7), NodeLabel(Pos(7, 7)));
-
-	for (int i = 0; i < 8; i++) {
-		for (int j = 0; j < 8; j++) {
-			if (piecePos[i][j] == nullptr) {
-				piecePos[i][j] = new Empty(Pos(i,j), NodeLabel(Pos(i, j)));
-			}
-		}
-	}
 }
 
 
