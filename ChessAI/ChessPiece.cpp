@@ -46,12 +46,26 @@ void ChessPiece::SetY(int y)
 	pos.y = y;
 }
 
+PIECE_TYPE ChessPiece::getPieceType() {
+	return this->pieceName;
+}
+
+
+bool ChessPiece::getCheckStatusForPiece() {
+	return this->isPiecePartCheck;
+}
+void ChessPiece::setCheckStatusForPiece(bool valueToSet) {
+	this->isPiecePartCheck = valueToSet;
+	return;
+}
 
 // Rook
 Rook::Rook(SIDE side, Pos pos, string label)
 {
 	this->TypeLabel = label;
 	pieceSide = side;
+	this->pieceName = ROOK;
+
 	if (pieceSide == WHITE) {
 		if (!texture.loadFromFile("sprites/rookw.png")) {
 			printf("rookw error\n");
@@ -87,6 +101,8 @@ bool inBounds(int num) {
 // StartI, startJ: starting I and J positions
 // addI, addJ: how much we will move each move
 vector<Pos> MoveHelper(int maxMove, int startI, int startJ, int addI, int addJ, ChessPiece*** board) {
+
+	
 	vector<Pos> moves;
 	for (int i = 1; i <= maxMove; i++) {
 		int curI = (addI * i) + startI;
@@ -96,24 +112,32 @@ vector<Pos> MoveHelper(int maxMove, int startI, int startJ, int addI, int addJ, 
 			continue;
 		}
 
+		//if there is an enemy king blocking your way, piece is involved in a check (or potentially a checkmate). Set check flag for piece and return whatever moves were added.
+		if ((board[curI][curJ]->GetSide() != board[startI][startJ]->GetSide()) && (board[curI][curJ]->getPieceType() == KING)) {
+			board[startI][startJ]->setCheckStatusForPiece(true);
+			return moves;
+		}
+
 		if (board[curI][curJ]->GetSide() == NONE) {
 			moves.push_back(Pos(curI, curJ)); // no piece blocking path, add it and continue
 		}
-		else if (board[curI][curJ]->GetSide() == board[startI][startJ]->GetSide()) { 
+		else if (board[curI][curJ]->GetSide() == board[startI][startJ]->GetSide()) {
 			return moves; // teammate blocking path, we return what we have so far
 		}
-		else if (board[curI][curJ]->GetSide() != board[startI][startJ]->GetSide()) {
-			moves.push_back(Pos(curI, curJ)); // enemy blocking path, we can take it, so we add and return
+
+		//if there is an enemy which is not a king blocking the path, we can add this to possible moves as a potential piece to kill.
+		else if ((board[curI][curJ]->GetSide() != board[startI][startJ]->GetSide()) && (board[curI][curJ]->getPieceType() != KING)) {
+			moves.push_back(Pos(curI, curJ));
 			return moves;
 		}
 	}
-
 	return moves;
+
 }
 
 
 
-vector<Pos> Rook::PossibleMoves(ChessPiece*** board)
+vector<Pos> Rook::PossibleMoves(ChessPiece*** board, SIDE pieceColor)
 {
 	// find a different way instead of this function
 	if (ProtectingQueen()) {
@@ -141,6 +165,8 @@ Bishop::Bishop(SIDE side, Pos pos, string label)
 {
 	this->TypeLabel = label;
 	pieceSide = side;
+	this->pieceName = BISHOP;
+
 	if (pieceSide == WHITE) {
 		if (!texture.loadFromFile("sprites/bishopw.png")) {
 			printf("bishopw error\n");
@@ -161,7 +187,7 @@ Bishop::Bishop(SIDE side, Pos pos, string label)
 	this->pos = pos;
 }
 
-vector<Pos> Bishop::PossibleMoves(ChessPiece*** board)
+vector<Pos> Bishop::PossibleMoves(ChessPiece*** board, SIDE pieceColor)
 {
 	// find a different way instead of this function
 	if (ProtectingQueen()) {
@@ -189,6 +215,7 @@ King::King(SIDE side, Pos pos, string label)
 {
 	this->TypeLabel = label;
 	pieceSide = side;
+	this->pieceName = KING;
 	if (pieceSide == WHITE) {
 		if (!texture.loadFromFile("sprites/kingw.png")) {
 			printf("kingw error\n");
@@ -209,7 +236,7 @@ King::King(SIDE side, Pos pos, string label)
 	this->pos = pos;
 }
 
-vector<Pos> King::PossibleMoves(ChessPiece*** board)
+vector<Pos> King::PossibleMoves(ChessPiece*** board, SIDE pieceColor)
 {
 	vector<Pos> PossibleMove;
 
@@ -222,8 +249,7 @@ vector<Pos> King::PossibleMoves(ChessPiece*** board)
 		Up = MoveHelper(1, i, j, 0, 1, board),
 		Down = MoveHelper(1, i, j, 0, -1, board),
 		Right = MoveHelper(1, i, j, -1, 0, board),
-		Left = MoveHelper(1, i, j, 1, -0, board);;
-
+		Left = MoveHelper(1, i, j, 1, -0, board);
 	PossibleMove = Up;
 	PossibleMove.insert(PossibleMove.end(), Down.begin(), Down.end());
 	PossibleMove.insert(PossibleMove.end(), Right.begin(), Right.end());
@@ -240,6 +266,8 @@ Queen::Queen(SIDE side, Pos pos, string label)
 {
 	this->TypeLabel = label;
 	pieceSide = side;
+	this->pieceName = QUEEN;
+
 	if (pieceSide == WHITE) {
 		if (!texture.loadFromFile("sprites/queenw.png")) {
 			printf("queenw error\n");
@@ -260,7 +288,7 @@ Queen::Queen(SIDE side, Pos pos, string label)
 	this->pos = pos;
 }
 
-vector<Pos> Queen::PossibleMoves(ChessPiece*** board)
+vector<Pos> Queen::PossibleMoves(ChessPiece*** board, SIDE pieceColor)
 {
 	if (ProtectingQueen()) {
 		return vector<Pos>();
@@ -295,6 +323,7 @@ Pawn::Pawn(SIDE side, Pos pos, string label)
 {
 	this->TypeLabel = label;
 	pieceSide = side;
+	this->pieceName = PAWN;
 	if (pieceSide == WHITE) {
 		if (!texture.loadFromFile("sprites/pawnw.png")) {
 			printf("pawnw error\n");
@@ -315,12 +344,11 @@ Pawn::Pawn(SIDE side, Pos pos, string label)
 	this->pos = pos;
 }
 
-vector<Pos> Pawn::PossibleMoves(ChessPiece*** board)
+vector<Pos> Pawn::PossibleMoves(ChessPiece*** board, SIDE pieceColor)
 {
 	if (ProtectingQueen()) {
 		return vector<Pos>();
 	}
-
 	vector<Pos> PossibleMove;
 
 	int i = pos.x;
@@ -329,16 +357,24 @@ vector<Pos> Pawn::PossibleMoves(ChessPiece*** board)
 
 	vector<Pos> UpRight = MoveHelper(1, i, j, 1, side, board),
 		UpLeft = MoveHelper(1, i, j, -1, side, board),
-		Up = MoveHelper(1, i, j, 0, side, board);
-
+		Up = MoveHelper(1, i, j, 0, side, board),
+		Up2 = MoveHelper(2, i, j, 0, side, board);
 
 	if (Up.size()) {
-		SIDE PosSide = board[Up.front().x][Up.front().y]->GetSide();
-		if (PosSide == NONE) {
-			PossibleMove = Up;
+		if (this->isMoved) {
+			SIDE PosSide = board[Up.front().x][Up.front().y]->GetSide();
+			if (PosSide == NONE) {
+				PossibleMove = Up;
+			}
 		}
 	}
-	
+
+
+	if (Up2.size()) {
+		if (!this->isMoved) {
+			PossibleMove = Up2;
+		}
+	}
 
 	if (!UpRight.empty()) {
 		SIDE PosSide = board[UpRight.front().x][UpRight.front().y]->GetSide();
@@ -349,7 +385,7 @@ vector<Pos> Pawn::PossibleMoves(ChessPiece*** board)
 
 	if (!UpLeft.empty()) {
 		SIDE PosSide = board[UpLeft.front().x][UpLeft.front().y]->GetSide();
-		printf("%d", PosSide);
+		//printf("%d", PosSide);
 		if (PosSide != NONE && PosSide != this->pieceSide) {
 			PossibleMove.insert(PossibleMove.end(), UpLeft.begin(), UpLeft.end());
 		}
@@ -363,6 +399,7 @@ Knight::Knight(SIDE side, Pos pos, string label)
 {
 	this->TypeLabel = label;
 	pieceSide = side;
+	this->pieceName = KNIGHT;
 	if (pieceSide == WHITE) {
 		if (!texture.loadFromFile("sprites/knightw.png")) {
 			printf("knightw error\n");
@@ -383,7 +420,7 @@ Knight::Knight(SIDE side, Pos pos, string label)
 	this->pos = pos;
 }
 
-vector<Pos> Knight::PossibleMoves(ChessPiece*** board)
+vector<Pos> Knight::PossibleMoves(ChessPiece*** board, SIDE pieceColor)
 {
 	vector<Pos> PossibleMove;
 
