@@ -9,6 +9,22 @@ string NodeLabel(Pos pos) {
 	return posX + posY;
 }
 
+bool ChessBoard::getCheckFlagWhite() {
+	return this->checkFlagWhite;
+}
+bool ChessBoard::getCheckFlagBlack() {
+	return this->checkFlagBlack;
+}
+
+void ChessBoard::setCheckFlagWhite(bool valueToSet) {
+	this->checkFlagWhite = valueToSet;
+	return;
+}
+void ChessBoard::setCheckFlagBlack(bool valueToSet) {
+	this->checkFlagWhite = valueToSet;
+	return;
+}
+
 ChessBoard::ChessBoard()
 {
 	for (int i = 0; i < 8; i++) {
@@ -143,12 +159,14 @@ void ChessBoard::ProcessClickEvent(int x, int y)
 	if (selectedPiece) {
 		// find all of its possible moves
 		vector<Pos> Moves = selectedPiece->PossibleMoves(piecePos);
-		
+			
 		// check the spot we just clicked to see if its in the possible move
 		for (Pos pos : Moves) {
 
 			// if it is in the possible move, move your piece over to that spot.
 			if (pos.x == x && pos.y == y) {
+				selectedPiece->isMoved = true;
+
 				free(piecePos[x][y]); 
 				piecePos[x][y] = piecePos[selectedPiece->GetX()][selectedPiece->GetY()];
 				piecePos[selectedPiece->GetX()][selectedPiece->GetY()] = new Empty(Pos(selectedPiece->GetX(), selectedPiece->GetY()), NodeLabel(Pos(selectedPiece->GetX(), selectedPiece->GetY())));
@@ -158,6 +176,8 @@ void ChessBoard::ProcessClickEvent(int x, int y)
 				selectedPiece->SetY(y);
 				selectedPiece = nullptr;
 				curTurn = SwapCurTurn();
+
+
 				return;
 			}
 		}
