@@ -21,7 +21,7 @@ void ChessBoard::setCheckFlagWhite(bool valueToSet) {
 	return;
 }
 void ChessBoard::setCheckFlagBlack(bool valueToSet) {
-	this->checkFlagWhite = valueToSet;
+	this->checkFlagBlack = valueToSet;
 	return;
 }
 
@@ -108,6 +108,10 @@ void ChessBoard::DisplayBoard(RenderWindow &window)
 	RectangleShape boardSquare;
 	Color squareColor;
 
+	//updates the current status of check for white or black after each move is made. 
+	determineIfAnyCheck();
+
+
 	// draw board and pieces
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {		
@@ -146,6 +150,38 @@ void ChessBoard::DisplayBoard(RenderWindow &window)
 		}
 		
 	}
+
+	//load the output SFML font, if not possible, output error.
+	Font font;
+	if (!font.loadFromFile("fonts/ShortBaby-Mg2w.ttf")) {
+		printf("Error, could not load font\n");
+		exit(0);
+	}
+
+	//if black is in check, display text output to SFML Window.
+	if (getCheckFlagBlack()) {
+		Text blackCheck;	
+		blackCheck.setFont(font);
+		blackCheck.setFillColor(Color::Red);
+		blackCheck.setString("Black is in check!");
+		blackCheck.setCharacterSize(40);
+		blackCheck.setPosition(Vector2f(150, 550));
+		window.draw(blackCheck);
+	}
+
+	//if white is in check, display text output to SFML Window.
+	if (getCheckFlagWhite()) {
+		Text whiteCheck;
+		whiteCheck.setFont(font);
+		whiteCheck.setFillColor(Color::Red);
+		whiteCheck.setString("White is in check!");
+		whiteCheck.setCharacterSize(40);
+		whiteCheck.setPosition(Vector2f(150, 550));
+		window.draw(whiteCheck);
+	}
+
+
+
 }
 
 void ChessBoard::ProcessClickEvent(int x, int y)
@@ -165,19 +201,20 @@ void ChessBoard::ProcessClickEvent(int x, int y)
 
 			// if it is in the possible move, move your piece over to that spot.
 			if (pos.x == x && pos.y == y) {
-				selectedPiece->isMoved = true;
-
 				free(piecePos[x][y]); 
 				piecePos[x][y] = piecePos[selectedPiece->GetX()][selectedPiece->GetY()];
 				piecePos[selectedPiece->GetX()][selectedPiece->GetY()] = new Empty(Pos(selectedPiece->GetX(), selectedPiece->GetY()), NodeLabel(Pos(selectedPiece->GetX(), selectedPiece->GetY())));
-				
+				selectedPiece->isMoved = true;
+
+
 				// update the cords in the piece itself
 				selectedPiece->SetX(x); // set flag to moved in pawn
 				selectedPiece->SetY(y);
 				selectedPiece = nullptr;
 				curTurn = SwapCurTurn();
+				
 
-
+				
 				return;
 			}
 		}
@@ -189,4 +226,69 @@ void ChessBoard::ProcessClickEvent(int x, int y)
 	else {
 		selectedPiece = nullptr;
 	}
+}
+
+
+void ChessBoard::determineIfAnyCheck() {
+
+	//check if any moves from any chess pieces result in check, if so, update respective check status for piece.
+	for (unsigned int i = 0; i < 8; i++) {
+		for (unsigned int j = 0; j < 8; j++) {
+			if (piecePos[i][j]->getPieceType() != INVALID) {
+				piecePos[i][j]->PossibleMoves(piecePos);
+			}
+		}
+	}
+
+	//clear old results.
+	whitePiecesChecking.clear();
+	blackPiecesChecking.clear();
+
+	//finds all pieces participating in a check (white or black pieces)
+	for (unsigned int i = 0; i < 8; i++) {
+		for (unsigned int j = 0; j < 8; j++) {
+			//if the current piece found is doing a check on their respective enemy king.
+			if (piecePos[i][j]->getCheckStatusForPiece()) {
+				//if the current piece involved in a check is white, black king is in check.
+				if (piecePos[i][j]->GetSide() == WHITE) {
+					whitePiecesChecking.push_back(piecePos[i][j]);
+				}
+				//if the current piece involved in a check is black, white king is in check instead.
+				if (piecePos[i][j]->GetSide() == BLACK) {
+					blackPiecesChecking.push_back(piecePos[i][j]);
+				}
+
+			}
+		}
+	}
+
+	//if black king is in check, set check flag for black. This is true when there are chess pieces in the whitePiecesChecking container.
+	if (whitePiecesChecking.size()) {
+		setCheckFlagBlack(true);
+	}
+	//else, no check on black king so set check flag to false if not already.
+	else {
+		setCheckFlagBlack(false);
+	}
+
+	//if white king is in check, set check flag for white. This is true when there are chess pieces in the blackPiecesChecking container.
+	if (blackPiecesChecking.size()) {
+		setCheckFlagWhite(true);
+	}
+	//otherwise, no check on white king so set check flag to false if not already.
+	else {
+		setCheckFlagWhite(false);
+	}
+
+	//reset individual check flags for all pieces (will be re-evaluated at the start of this function again).
+	for (unsigned int i = 0; i < 8; i++) {
+		for (unsigned int j = 0; j < 8; j++) {
+			if (piecePos[i][j]->getPieceType() != INVALID) {
+				piecePos[i][j]->setCheckStatusForPiece(false);
+			}
+		}
+	}
+
+
+	return;
 }
