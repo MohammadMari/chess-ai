@@ -30,6 +30,10 @@ struct Pos {
 		this->y = y;
 	}
 
+	Pos(){
+
+	}
+
 	int x = 0;
 	int y = 0;
 };
@@ -63,7 +67,11 @@ public:
 		return false; // temporary
 	}
 	virtual vector<Pos> PossibleMoves(ChessPiece*** board, SIDE pieceColor = NONE) = 0;
-protected:
+	
+	//determines attacking line for chess pieces checking their respective enemy kings King (This is not applicable for knight pieces or king pieces or pawn pieces). 
+	virtual vector<Pos> AttackingLine(ChessPiece*** board, SIDE pieceColor = NONE) = 0;
+
+	protected:
 	//this determines whether if a given piece is currently checking enemy King or not.
 	bool isPiecePartCheck = false;
 
@@ -79,7 +87,12 @@ protected:
 class Empty : public ChessPiece {
 public:
 	Empty(Pos pos, string label);
+	//not applicable for this class.
 	vector<Pos> PossibleMoves(ChessPiece*** board, SIDE pieceColor = NONE) {
+		return vector<Pos>();
+	}
+	//not applicable for this class.
+	vector<Pos> AttackingLine(ChessPiece*** board, SIDE pieceColor = NONE) {
 		return vector<Pos>();
 	}
 };
@@ -89,37 +102,51 @@ class Rook : public ChessPiece {
 public:
 	Rook(SIDE side, Pos pos, string label);
 	vector<Pos> PossibleMoves(ChessPiece*** board, SIDE pieceColor = NONE);
+	vector<Pos> AttackingLine(ChessPiece*** board, SIDE pieceColor = NONE);
 };
 
 class Bishop : public ChessPiece {
 public:
 	Bishop(SIDE side, Pos pos, string label);
 	vector<Pos> PossibleMoves(ChessPiece*** board, SIDE pieceColor = NONE);
+	vector<Pos> AttackingLine(ChessPiece*** board, SIDE pieceColor = NONE);
 };
 
 class King : public ChessPiece {
 public:
 	King(SIDE side, Pos pos, string label);
 	vector<Pos> PossibleMoves(ChessPiece*** board, SIDE pieceColor = NONE);
+	//not applicable for King.
+	vector<Pos> AttackingLine(ChessPiece*** board, SIDE pieceColor = NONE) {
+		return vector<Pos>();
+	}
 };
 
 class Queen : public ChessPiece {
 public:
 	Queen(SIDE side, Pos pos, string label);
 	vector<Pos> PossibleMoves(ChessPiece*** board, SIDE pieceColor = NONE);
+	vector<Pos> AttackingLine(ChessPiece*** board, SIDE pieceColor = NONE);
 };
 
 class Knight : public ChessPiece {
 public:
 	Knight(SIDE side, Pos pos, string label);
 	vector<Pos> PossibleMoves(ChessPiece*** board, SIDE pieceColor = NONE);
+	//not applicable for a knight piece.
+	vector<Pos> AttackingLine(ChessPiece*** board, SIDE pieceColor = NONE) {
+		return vector<Pos>();
+	}
 };
 
 class Pawn : public ChessPiece {
 public:
 	Pawn(SIDE side, Pos pos, string label);
 	vector<Pos> PossibleMoves(ChessPiece*** board, SIDE pieceColor = NONE);
+	//not applicable for a pawn piece.
+	vector<Pos> AttackingLine(ChessPiece*** board, SIDE pieceColor = NONE) {
+		return vector<Pos>();
+	}
 private:
 	bool Moved = false; // used for en passant
 };
-
