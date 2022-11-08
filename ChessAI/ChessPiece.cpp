@@ -135,6 +135,143 @@ vector<Pos> MoveHelper(int maxMove, int startI, int startJ, int addI, int addJ, 
 
 }
 
+//returns attacking line for a piece checking an enemy king. If not found, then this is not the attacking line.
+vector<Pos> checkHelper(int maxMove, int startI, int startJ, int addI, int addJ, ChessPiece*** board) {
+	
+	//stores the potential final result attacking line.
+	vector<Pos> potentialAttackingLine;
+	
+	for (int i = 1; i <= maxMove; i++) {
+		int curI = (addI * i) + startI;
+		int curJ = (addJ * i) + startJ;
+
+		//out of bounds.
+		if (!inBounds(curI) || !inBounds(curJ)) {
+			continue;
+		}
+
+		//if there is an enemy king blocking your way, piece is involved in a check (or potentially a checkmate). Set check flag for piece and return whatever moves were added.
+		if ((board[curI][curJ]->GetSide() != board[startI][startJ]->GetSide()) && (board[curI][curJ]->getPieceType() == KING)) {
+			return potentialAttackingLine;
+		}
+
+		if (board[curI][curJ]->GetSide() == NONE) {
+			potentialAttackingLine.push_back(Pos(curI, curJ)); //no piece blocking path, add it as a potential attacking line and continue.
+		}
+		else if (board[curI][curJ]->GetSide() == board[startI][startJ]->GetSide()) {
+			return (vector<Pos>()); // teammate blocking path, not an attacking line so return empty set.
+		}
+
+		//if there is an enemy which is not a king blocking the path, not an attacking line so return empty set.
+		else if ((board[curI][curJ]->GetSide() != board[startI][startJ]->GetSide()) && (board[curI][curJ]->getPieceType() != KING)) {
+			return (vector<Pos>());
+		}
+	}
+	//didn't find attacking line, so return empty set.
+	return (vector<Pos>());
+}
+
+//returns found attacking line for Rook, else returns empty set if unexpected error occurs.
+vector<Pos> Rook::AttackingLine(ChessPiece*** board, SIDE pieceColor) {
+
+	int i = pos.x;
+	int j = pos.y;
+
+	vector<Pos> Up = checkHelper(8, i, j, 0, 1, board),
+		Down = checkHelper(8, i, j, 0, -1, board),
+		Right = checkHelper(8, i, j, 1, 0, board),
+		Left = checkHelper(8, i, j, -1, 0, board);
+
+	if (Up.size() != 0) {
+		return Up;
+	}
+	else if (Down.size() != 0) {
+		return Down;
+	}
+	else if (Right.size() != 0) {
+		return Right;
+	}
+	else if (Left.size() != 0) {
+		return Left;
+	}
+
+	return vector<Pos>();
+
+}
+
+//returns found attacking line for Bishop, else returns empty set if unexpected error occurs.
+vector<Pos> Bishop::AttackingLine(ChessPiece*** board, SIDE pieceColor) {
+	int i = pos.x;
+	int j = pos.y;
+	vector<Pos> Up = checkHelper(8, i, j, 1, 1, board),
+		Down = checkHelper(8, i, j, -1, -1, board),
+		Right = checkHelper(8, i, j, -1, 1, board),
+		Left = checkHelper(8, i, j, 1, -1, board);
+	if (Up.size() != 0) {
+		return Up;
+	}
+	else if (Down.size() != 0) {
+		return Down;
+	}
+	else if (Right.size() != 0) {
+		return Right;
+	}
+	else if (Left.size() != 0) {
+		return Left;
+	}
+
+	return vector<Pos>();
+
+}
+
+//returns found attacking line for Queen, else returns empty set if unexpected error occurs.
+vector<Pos> Queen::AttackingLine(ChessPiece*** board, SIDE pieceColor) {
+	int i = pos.x;
+	int j = pos.y;
+	vector<Pos> UpRight = checkHelper(8, i, j, 1, 1, board),
+		DownLeft = checkHelper(8, i, j, -1, -1, board),
+		DownRight = checkHelper(8, i, j, -1, 1, board),
+		UpLeft = checkHelper(8, i, j, 1, -1, board),
+		Up = checkHelper(8, i, j, 0, 1, board),
+		Down = checkHelper(8, i, j, 0, -1, board),
+		Right = checkHelper(8, i, j, -1, 0, board),
+		Left = checkHelper(8, i, j, 1, -0, board);
+
+	if (Up.size() != 0) {
+		return Up;
+	}
+	else if (Down.size() != 0) {
+		return Down;
+	}
+	else if (Right.size() != 0) {
+		return Right;
+	}
+	else if (Left.size() != 0) {
+		return Left;
+	}
+
+	if (UpRight.size() != 0) {
+		return UpRight;
+	}
+
+	if (UpLeft.size() != 0) {
+		return UpLeft;
+	}
+
+	if (DownRight.size() != 0) {
+		return DownRight;
+	}
+
+	if (DownLeft.size() != 0) {
+		return DownLeft;
+	}
+
+
+	return vector<Pos>();
+
+}
+
+
 
 
 vector<Pos> Rook::PossibleMoves(ChessPiece*** board, SIDE pieceColor)
@@ -372,7 +509,10 @@ vector<Pos> Pawn::PossibleMoves(ChessPiece*** board, SIDE pieceColor)
 
 	if (Up2.size()) {
 		if (!this->isMoved) {
-			PossibleMove = Up2;
+			SIDE PosSide = board[Up.front().x][Up.front().y]->GetSide();
+			if (PosSide == NONE) {
+				PossibleMove = Up2;
+			}
 		}
 	}
 
