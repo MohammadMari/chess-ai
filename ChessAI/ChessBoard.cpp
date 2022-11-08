@@ -602,15 +602,13 @@ void ChessBoard::checkHandlerWhite() {
 						}
 					}
 
-					int offset = 0;
-
 					//if after going through both criteria, certain move positions are still considered invalid, this move must be filtered out of the moves vector as a possible move.
-					for (unsigned int k = 0; k < isMoveElementValid.size(); k++) {
+					for (unsigned int k = 0; k < moves.size(); k++) {
 						//if the move is considered an invalid move for the current piece.
-						if (!isMoveElementValid.at(k + offset)) {
+						if (!isMoveElementValid.at(k)) {
 							//remove or filter out the current move position at k since it is an invalid move.
-							moves.erase(moves.begin() + k + offset);
-							offset--;
+							moves.erase(moves.begin() + k);
+							k = 0;
 						}
 					}
 
@@ -679,15 +677,14 @@ void ChessBoard::checkHandlerWhite() {
 
 					}
 
-					int offset = 0;
 
 					//if after going through both criteria, certain move positions are still considered invalid, this move must be filtered out of the moves vector as a possible move.
-					for (unsigned int k = 0; k < isMoveElementValid.size(); k++) {
+					for (unsigned int k = 0; k < moves.size(); k++) {
 						//if the move is considered an invalid move for the current piece.
-						if (!isMoveElementValid.at(k + offset)) {
+						if (!isMoveElementValid.at(k)) {
 							//remove or filter out the current move position at k since it is an invalid move.
-							moves.erase(moves.begin() + k + offset);
-							offset--;
+							moves.erase(moves.begin() + k);
+							k = 0;
 						}
 					}
 
@@ -792,15 +789,13 @@ void ChessBoard::checkHandlerBlack() {
 							}
 						}
 					}
-					int offset = 0;
-
 					//if after going through both criteria, certain move positions are still considered invalid, this move must be filtered out of the moves vector as a possible move.
-					for (unsigned int k = 0; k < isMoveElementValid.size(); k++) {
+					for (unsigned int k = 0; k < moves.size(); k++) {
 						//if the move is considered an invalid move for the current piece.
-						if (!isMoveElementValid.at(k + offset)) {
+						if (!isMoveElementValid.at(k)) {
 							//remove or filter out the current move position at k since it is an invalid move.
-							moves.erase(moves.begin() + k + offset);
-							offset--;
+							moves.erase(moves.begin() + k);
+							k = 0;
 						}
 					}
 
@@ -868,15 +863,13 @@ void ChessBoard::checkHandlerBlack() {
 						}
 
 					}
-					int offset = 0;
-
 					//if after going through both criteria, certain move positions are still considered invalid, this move must be filtered out of the moves vector as a possible move.
-					for (unsigned int k = 0; k < isMoveElementValid.size(); k++) {
+					for (unsigned int k = 0; k < moves.size(); k++) {
 						//if the move is considered an invalid move for the current piece.
-						if (!isMoveElementValid.at(k + offset)) {
+						if (!isMoveElementValid.at(k)) {
 							//remove or filter out the current move position at k since it is an invalid move.
-							moves.erase(moves.begin() + k + offset);
-							offset--;
+							moves.erase(moves.begin() + k);
+							k = 0;
 						}
 					}
 
