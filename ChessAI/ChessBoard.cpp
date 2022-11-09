@@ -575,9 +575,8 @@ void ChessBoard::checkHandlerWhite() {
 
 					//now iterate through the moves container and figure out which moves need to be filtered out individually.
 					for (unsigned int k = 0; k < moves.size(); k++) {
-						/* CRITERIA TO CHECK FOR VALID MOVE. EITHER SATISFIED MEANS VALID MOVE.
+						/* CRITERIA TO CHECK FOR VALID MOVE.
 							1.	Valid move if the position also happens to be a position that is a part of an attacking line (in chess, this represents a piece blocking an attack to its respective king from an enemy piece)
-							2.	Valid move if it corresponds to an enemy piece attacking the king AND only 1 enemy piece is attacking the king ("Uplifts" the check by killing intruder). 
 						*/
 						//represents current move to check if valid.
 						Pos currMove = moves.at(k);
@@ -595,15 +594,15 @@ void ChessBoard::checkHandlerWhite() {
 							}
 						}
 
-						//second criteria now.
+						//this is commented out. This criteria is not possible I believe, so there is no need to check it.
 
-						//there must only be one black piece checking the white king for a check to be able to be "Uplifted.".
-						if (blackPiecesChecking.size() == 1) {
-							//if this move represents a move where the checking piece can get killed, mark this also as a valid move. The black piece will be at the first index so no need to determine the index.
-							if ((currMove.x == blackPiecesChecking.at(0)->GetX()) && (currMove.y == blackPiecesChecking.at(0)->GetY())) {
-								isMoveElementValid.at(k) = true;
-							}
-						}
+					//	//there must only be one black piece checking the white king for a check to be able to be "Uplifted.".
+					//	if (blackPiecesChecking.size() == 1) {
+					//		//if this move represents a move where the checking piece can get killed, mark this also as a valid move. The black piece will be at the first index so no need to determine the index.
+					//		if ((currMove.x == blackPiecesChecking.at(0)->GetX()) && (currMove.y == blackPiecesChecking.at(0)->GetY())) {
+					//			isMoveElementValid.at(k) = true;
+					//		}
+					//	}
 					}
 
 					vector<Pos> validMovements;
@@ -635,6 +634,8 @@ void ChessBoard::checkHandlerWhite() {
 							2. Can kill a piece doing a check, if after killing piece, not on an attack line.
 						*/
 						
+						isMoveElementValid.at(k) = true;
+
 						//represents current move to check if valid.
 						Pos currMove = moves.at(k);
 						//First checking criteria number 1.
@@ -642,43 +643,46 @@ void ChessBoard::checkHandlerWhite() {
 						//now we are iterating through attackLines to see if we can find a corresponding equivalent position in attackLines 
 						//(there could be more than 1 of the same position in attackLines so each element is not guaranteed to be unique).
 						for (unsigned int l = 0; l < attackLines.size(); l++) {
-							//represents a position of an attack line.
+						//	//represents a position of an attack line.
 							Pos currAttackLineLocation = attackLines.at(l);
-							
-							//assuming true because easier to prove false.
-							isMoveElementValid.at(k) = true;
 
-							//if it is not the same as an attackLine position, valid move (so the moment it finds that an attackLine is the same as the current move, current move is not valid).
+
+
+						//	//if it is not the same as an attackLine position, valid move (so the moment it finds that an attackLine is the same as the current move, current move is not valid).
 							if ((currMove.x == currAttackLineLocation.x) && (currMove.y == currAttackLineLocation.y)) {
 								isMoveElementValid.at(k) = false;
 							}
-
+						}
 							//now checking second criteria.
 							
-							Pos position;
-							position.x = piecePos[i][j]->GetX();
-							position.y = piecePos[i][j]->GetY();
+						//Pos position;
+						//position.x = piecePos[i][j]->GetX();
+						//position.y = piecePos[i][j]->GetY();
 
 
-							Empty* tempEmpty = new Empty(position, NodeLabel(position));
+						//ChessPiece* nodeToReplace = piecePos[currMove.x][currMove.y];
+						//piecePos[currMove.x][currMove.y] = piecePos[i][j];
+						//piecePos[currMove.x][currMove.y]->SetX(currMove.x);
+						//piecePos[currMove.x][currMove.y]->SetY(currMove.x);
+						//piecePos[i][j] = nodeToReplace;
+						//nodeToReplace->SetX(position.x);
+						//nodeToReplace->SetY(position.y);
 
-							ChessPiece* nodeToReplace = piecePos[currMove.x][currMove.y];
-							piecePos[currMove.x][currMove.y] = piecePos[i][j];			
-							piecePos[i][j] = tempEmpty;
+						//determineIfAnyCheck();
 
-							determineIfAnyCheck();
+						//if (getCheckFlagBlack()) {
+						//	isMoveElementValid.at(k) = false;
+						//}
 
-							if (getCheckFlagWhite()) {
-								isMoveElementValid.at(k) = false;
-							}
+						//nodeToReplace = piecePos[i][j];
+						//piecePos[i][j] = piecePos[currMove.x][currMove.y];
+						//piecePos[i][j]->SetX(position.x);
+						//piecePos[i][j]->SetY(position.y);
+						//piecePos[currMove.x][currMove.y] = nodeToReplace;
+						//piecePos[currMove.x][currMove.y]->SetX(currMove.x);
+						//piecePos[currMove.x][currMove.y]->SetY(currMove.y);
 
-							free(piecePos[i][j]);
-							piecePos[i][j] = piecePos[currMove.x][currMove.y];
-							piecePos[currMove.x][currMove.y] = nodeToReplace;
-					
-							determineIfAnyCheck();
-
-						}
+						//determineIfAnyCheck();
 
 					}
 
@@ -767,9 +771,8 @@ void ChessBoard::checkHandlerBlack() {
 
 					//now iterate through the moves container and figure out which moves need to be filtered out individually.
 					for (unsigned int k = 0; k < moves.size(); k++) {
-						/* CRITERIA TO CHECK FOR VALID MOVE. EITHER SATISFIED MEANS VALID MOVE.
+						/* CRITERIA TO CHECK FOR VALID MOVE.
 							1.	Valid move if the position also happens to be a position that is a part of an attacking line (in chess, this represents a piece blocking an attack to its respective king from an enemy piece)
-							2.	Valid move if it corresponds to an enemy piece attacking the king AND only 1 enemy piece is attacking the king ("Uplifts" the check by killing intruder).
 						*/
 						//represents current move to check if valid.
 						Pos currMove = moves.at(k);
@@ -787,15 +790,14 @@ void ChessBoard::checkHandlerBlack() {
 							}
 						}
 
-						//second criteria now.
-
-						//there must only be one black piece checking the white king for a check to be able to be "Uplifted.".
-						if (whitePiecesChecking.size() == 1) {
-							//if this move represents a move where the checking piece can get killed, mark this also as a valid move. The black piece will be at the first index so no need to determine the index.
-							if ((currMove.x == whitePiecesChecking.at(0)->GetX()) && (currMove.y == whitePiecesChecking.at(0)->GetY())) {
-								isMoveElementValid.at(k) = true;
-							}
-						}
+						//do not think this is a possibility, so no need to check for it.
+						////there must only be one black piece checking the white king for a check to be able to be "Uplifted.".
+						//if (whitePiecesChecking.size() == 1) {
+						//	//if this move represents a move where the checking piece can get killed, mark this also as a valid move. The black piece will be at the first index so no need to determine the index.
+						//	if ((currMove.x == whitePiecesChecking.at(0)->GetX()) && (currMove.y == whitePiecesChecking.at(0)->GetY())) {
+						//		isMoveElementValid.at(k) = true;
+						//	}
+						//}
 					}
 					vector<Pos> validMovements;
 
@@ -826,6 +828,8 @@ void ChessBoard::checkHandlerBlack() {
 							2. Can kill a piece doing a check, if after killing piece, not on an attack line.
 						*/
 
+						isMoveElementValid.at(k) = true;
+
 						//represents current move to check if valid.
 						Pos currMove = moves.at(k);
 						//First checking criteria number 1.
@@ -833,43 +837,45 @@ void ChessBoard::checkHandlerBlack() {
 						//now we are iterating through attackLines to see if we can find a corresponding equivalent position in attackLines 
 						//(there could be more than 1 of the same position in attackLines so each element is not guaranteed to be unique).
 						for (unsigned int l = 0; l < attackLines.size(); l++) {
-							//represents a position of an attack line.
+							//	//represents a position of an attack line.
 							Pos currAttackLineLocation = attackLines.at(l);
 
-							//assuming true initially because easier to prove false.
-							isMoveElementValid.at(k) = true;
 
-							//if it is not the same as an attackLine position, valid move (so the moment it finds that an attackLine is the same as the current move, current move is not valid).
+
+							//	//if it is not the same as an attackLine position, valid move (so the moment it finds that an attackLine is the same as the current move, current move is not valid).
 							if ((currMove.x == currAttackLineLocation.x) && (currMove.y == currAttackLineLocation.y)) {
 								isMoveElementValid.at(k) = false;
 							}
-
-							//now checking second criteria.
-
-							Pos position;
-							position.x = piecePos[i][j]->GetX();
-							position.y = piecePos[i][j]->GetY();
-
-
-							Empty* tempEmpty = new Empty(position, NodeLabel(position));
-
-							ChessPiece* nodeToReplace = piecePos[currMove.x][currMove.y];
-							piecePos[currMove.x][currMove.y] = piecePos[i][j];
-							piecePos[i][j] = tempEmpty;
-
-							determineIfAnyCheck();
-
-							if (getCheckFlagBlack()) {
-								isMoveElementValid.at(k) = false;
-							}
-
-							free(piecePos[i][j]);
-							piecePos[i][j] = piecePos[currMove.x][currMove.y];
-							piecePos[currMove.x][currMove.y] = nodeToReplace;
-
-							determineIfAnyCheck();
-
 						}
+
+							//Pos position;
+							//position.x = piecePos[i][j]->GetX();
+							//position.y = piecePos[i][j]->GetY();
+
+
+							//ChessPiece* nodeToReplace = piecePos[currMove.x][currMove.y];
+							//piecePos[currMove.x][currMove.y] = piecePos[i][j];
+							//piecePos[currMove.x][currMove.y]->SetX(currMove.x);
+							//piecePos[currMove.x][currMove.y]->SetY(currMove.x);
+							//piecePos[i][j] = nodeToReplace;
+							//nodeToReplace->SetX(position.x);
+							//nodeToReplace->SetY(position.y);
+
+							//determineIfAnyCheck();
+
+							//if (getCheckFlagBlack()) {
+							//	isMoveElementValid.at(k) = false;
+							//}
+
+							//nodeToReplace = piecePos[i][j];
+							//piecePos[i][j] = piecePos[currMove.x][currMove.y];
+							//piecePos[i][j]->SetX(position.x);
+							//piecePos[i][j]->SetY(position.y);
+							//piecePos[currMove.x][currMove.y] = nodeToReplace;
+							//piecePos[currMove.x][currMove.y]->SetX(currMove.x);
+							//piecePos[currMove.x][currMove.y]->SetY(currMove.y);
+
+							//determineIfAnyCheck();
 
 					}
 					vector<Pos> validMovements;
@@ -888,7 +894,7 @@ void ChessBoard::checkHandlerBlack() {
 						Chess_Piece_Node newNode;
 						newNode.piece = currPiece;
 						newNode.validMoves = validMovements;
-						validPiecesToMoveDuringCheckWhite.push_back(newNode);
+						validPiecesToMoveDuringCheckBlack.push_back(newNode);
 					}
 				}
 
