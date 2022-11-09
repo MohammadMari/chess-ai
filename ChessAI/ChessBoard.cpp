@@ -193,17 +193,17 @@ void ChessBoard::DisplayBoard(RenderWindow &window)
 
 		}
 
-		////if black is in checkmate.
-		//if (getIsCheckMateOnBlack()) {
-		//	Text blackCheckMated;
-		//	blackCheckMated.setFont(font);
-		//	blackCheckMated.setFillColor(Color::Red);
-		//	blackCheckMated.setString("Black Is In Checkmate!");
-		//	blackCheckMated.setCharacterSize(40);
-		//	blackCheckMated.setPosition(Vector2f(150, 550));
-		//	window.draw(blackCheckMated);
-		//	return;
-		//}
+		//if black is in checkmate.
+		if (getIsCheckMateOnBlack()) {
+			Text blackCheckMated;
+			blackCheckMated.setFont(font);
+			blackCheckMated.setFillColor(Color::Red);
+			blackCheckMated.setString("Black Is In Checkmate!");
+			blackCheckMated.setCharacterSize(40);
+			blackCheckMated.setPosition(Vector2f(150, 550));
+			window.draw(blackCheckMated);
+			return;
+		}
 
 
 		if (isSelectedPieceValid) {
@@ -237,16 +237,16 @@ void ChessBoard::DisplayBoard(RenderWindow &window)
 		setIsCheckMateOnWhite();
 
 
-		//if (getIsCheckMateOnWhite()) {
-		//	Text whiteCheckMated;
-		//	whiteCheckMated.setFont(font);
-		//	whiteCheckMated.setFillColor(Color::Red);
-		//	whiteCheckMated.setString("White Is In Checkmate!");
-		//	whiteCheckMated.setCharacterSize(40);
-		//	whiteCheckMated.setPosition(Vector2f(150, 550));
-		//	window.draw(whiteCheckMated);
-		//	return;
-		//}
+		if (getIsCheckMateOnWhite()) {
+			Text whiteCheckMated;
+			whiteCheckMated.setFont(font);
+			whiteCheckMated.setFillColor(Color::Red);
+			whiteCheckMated.setString("White Is In Checkmate!");
+			whiteCheckMated.setCharacterSize(40);
+			whiteCheckMated.setPosition(Vector2f(150, 550));
+			window.draw(whiteCheckMated);
+			return;
+		}
 
 
 		bool isSelectedPieceValid = false;
@@ -301,6 +301,12 @@ void ChessBoard::ProcessClickEvent(int x, int y)
 	y /= 75;
 
 	printf("Curturn: %d\n", curTurn);
+
+	//first check if checkmate state for either white or black, if so then ignore all clicks.
+	if (getIsCheckMateOnBlack() || getIsCheckMateOnWhite()) {
+		return;
+	}
+
 
 	if ((!getCheckFlagBlack()) && (!getCheckFlagWhite())) {
 		// if we have a piece selected
