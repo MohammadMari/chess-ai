@@ -150,26 +150,7 @@ void ChessBoard::DisplayBoard(RenderWindow &window)
 		exit(0);
 	}
 
-	//if black is in checkmate.
-	if (getIsCheckMateOnBlack()) {
-		Text blackCheckMated;
-		blackCheckMated.setFont(font);
-		blackCheckMated.setFillColor(Color::Red);
-		blackCheckMated.setString("Black Is In Checkmate!");
-		blackCheckMated.setCharacterSize(40);
-		blackCheckMated.setPosition(Vector2f(150, 550));
-		window.draw(blackCheckMated);
-	}
 
-	if (getIsCheckMateOnWhite()) {
-		Text whiteCheckMated;
-		whiteCheckMated.setFont(font);
-		whiteCheckMated.setFillColor(Color::Red);
-		whiteCheckMated.setString("White Is In Checkmate!");
-		whiteCheckMated.setCharacterSize(40);
-		whiteCheckMated.setPosition(Vector2f(150, 550));
-		window.draw(whiteCheckMated);
-	}
 
 
 	//if it is neither a check for black or white.
@@ -212,7 +193,17 @@ void ChessBoard::DisplayBoard(RenderWindow &window)
 
 		}
 
-
+		////if black is in checkmate.
+		//if (getIsCheckMateOnBlack()) {
+		//	Text blackCheckMated;
+		//	blackCheckMated.setFont(font);
+		//	blackCheckMated.setFillColor(Color::Red);
+		//	blackCheckMated.setString("Black Is In Checkmate!");
+		//	blackCheckMated.setCharacterSize(40);
+		//	blackCheckMated.setPosition(Vector2f(150, 550));
+		//	window.draw(blackCheckMated);
+		//	return;
+		//}
 
 
 		if (isSelectedPieceValid) {
@@ -244,6 +235,19 @@ void ChessBoard::DisplayBoard(RenderWindow &window)
 
 		//checks what to set for checkmate status on white.
 		setIsCheckMateOnWhite();
+
+
+		//if (getIsCheckMateOnWhite()) {
+		//	Text whiteCheckMated;
+		//	whiteCheckMated.setFont(font);
+		//	whiteCheckMated.setFillColor(Color::Red);
+		//	whiteCheckMated.setString("White Is In Checkmate!");
+		//	whiteCheckMated.setCharacterSize(40);
+		//	whiteCheckMated.setPosition(Vector2f(150, 550));
+		//	window.draw(whiteCheckMated);
+		//	return;
+		//}
+
 
 		bool isSelectedPieceValid = false;
 		Chess_Piece_Node associatedNode;
@@ -337,29 +341,28 @@ void ChessBoard::ProcessClickEvent(int x, int y)
 	else if (getCheckFlagBlack()) {
 		Chess_Piece_Node associatedNode;
 
-		if (piecePos[x][y]->GetSide() == curTurn) {
+		if (selectedPiece) {
 			bool isValidPieceSelected = false;
 
 			for (unsigned int i = 0; i < validPiecesToMoveDuringCheckBlack.size(); i++) {
-				if (selectedPiece) {
 					if (selectedPiece->GetX() == validPiecesToMoveDuringCheckBlack.at(i).piece->GetX() && selectedPiece->GetY() == validPiecesToMoveDuringCheckBlack.at(i).piece->GetY()) {
 						isValidPieceSelected = true;
 						associatedNode = validPiecesToMoveDuringCheckBlack.at(i);
 					}
-				}
-
 			}
-			if (isValidPieceSelected) {
+			if (!isValidPieceSelected) {
+				selectedPiece = nullptr;
+			}
+		}
+		else if (selectedPiece == nullptr) {
+			if (piecePos[x][y]->GetSide() == curTurn) {
 				selectedPiece = piecePos[x][y];
 			}
 			else {
 				selectedPiece = nullptr;
 			}
-			
 		}
-		else {
-			selectedPiece = nullptr;
-		}
+
 
 		if (selectedPiece) {
 			// find all of its possible moves
@@ -521,6 +524,9 @@ void ChessBoard::checkHandlerWhite() {
 	//stores all found attack lines of black pieces that are checking the white king.
 	vector<Pos> attackLines;
 
+	validPiecesToMoveDuringCheckWhite.clear();
+
+
 	//at this point, there should be pieces in this container representing black pieces that are checking the white king. If not found, unexpected error has occurred.
 	if (blackPiecesChecking.size() == 0) {
 		printf("Error. White King is detected to be in check but no black pieces checking the white king were found.\n");
@@ -602,21 +608,22 @@ void ChessBoard::checkHandlerWhite() {
 						}
 					}
 
+					vector<Pos> validMovements;
+
 					//if after going through both criteria, certain move positions are still considered invalid, this move must be filtered out of the moves vector as a possible move.
 					for (unsigned int k = 0; k < moves.size(); k++) {
 						//if the move is considered an invalid move for the current piece.
-						if (!isMoveElementValid.at(k)) {
+						if (isMoveElementValid.at(k)) {
 							//remove or filter out the current move position at k since it is an invalid move.
-							moves.erase(moves.begin() + k);
-							k = 0;
+							validMovements.push_back(moves.at(k));
 						}
 					}
 
 					//if the piece actually has valid moves to make, then it is worth adding as a valid piece to move under the current check state.
-					if (moves.size() != 0) {
+					if (validMovements.size() != 0) {
 						Chess_Piece_Node newNode;
 						newNode.piece = currPiece;
-						newNode.validMoves = moves;
+						newNode.validMoves = validMovements;
 						validPiecesToMoveDuringCheckWhite.push_back(newNode);
 					}
 				}
@@ -678,21 +685,22 @@ void ChessBoard::checkHandlerWhite() {
 					}
 
 
+					vector<Pos> validMovements;
+
 					//if after going through both criteria, certain move positions are still considered invalid, this move must be filtered out of the moves vector as a possible move.
 					for (unsigned int k = 0; k < moves.size(); k++) {
 						//if the move is considered an invalid move for the current piece.
-						if (!isMoveElementValid.at(k)) {
+						if (isMoveElementValid.at(k)) {
 							//remove or filter out the current move position at k since it is an invalid move.
-							moves.erase(moves.begin() + k);
-							k = 0;
+							validMovements.push_back(moves.at(k));
 						}
 					}
 
 					//if the piece actually has valid moves to make, then it is worth adding as a valid piece to move under the current check state.
-					if (moves.size() != 0) {
+					if (validMovements.size() != 0) {
 						Chess_Piece_Node newNode;
 						newNode.piece = currPiece;
-						newNode.validMoves = moves;
+						newNode.validMoves = validMovements;
 						validPiecesToMoveDuringCheckWhite.push_back(newNode);
 					}
 				}
@@ -709,6 +717,8 @@ void ChessBoard::checkHandlerWhite() {
 void ChessBoard::checkHandlerBlack() {
 	//stores all found attack lines of white pieces that are checking the black king.
 	vector<Pos> attackLines;
+
+	validPiecesToMoveDuringCheckBlack.clear();
 
 	//at this point, there should be pieces in this container representing white pieces that are checking the black king. If not found, unexpected error has occurred.
 	if (whitePiecesChecking.size() == 0) {
@@ -789,21 +799,22 @@ void ChessBoard::checkHandlerBlack() {
 							}
 						}
 					}
+					vector<Pos> validMovements;
+
 					//if after going through both criteria, certain move positions are still considered invalid, this move must be filtered out of the moves vector as a possible move.
 					for (unsigned int k = 0; k < moves.size(); k++) {
 						//if the move is considered an invalid move for the current piece.
-						if (!isMoveElementValid.at(k)) {
+						if (isMoveElementValid.at(k)) {
 							//remove or filter out the current move position at k since it is an invalid move.
-							moves.erase(moves.begin() + k);
-							k = 0;
+							validMovements.push_back(moves.at(k));
 						}
 					}
 
 					//if the piece actually has valid moves to make, then it is worth adding as a valid piece to move under the current check state.
-					if (moves.size() != 0) {
+					if (validMovements.size() != 0) {
 						Chess_Piece_Node newNode;
 						newNode.piece = currPiece;
-						newNode.validMoves = moves;
+						newNode.validMoves = validMovements;
 						validPiecesToMoveDuringCheckBlack.push_back(newNode);
 					}
 				}
@@ -863,22 +874,23 @@ void ChessBoard::checkHandlerBlack() {
 						}
 
 					}
+					vector<Pos> validMovements;
+
 					//if after going through both criteria, certain move positions are still considered invalid, this move must be filtered out of the moves vector as a possible move.
 					for (unsigned int k = 0; k < moves.size(); k++) {
 						//if the move is considered an invalid move for the current piece.
-						if (!isMoveElementValid.at(k)) {
+						if (isMoveElementValid.at(k)) {
 							//remove or filter out the current move position at k since it is an invalid move.
-							moves.erase(moves.begin() + k);
-							k = 0;
+							validMovements.push_back(moves.at(k));
 						}
 					}
 
 					//if the piece actually has valid moves to make, then it is worth adding as a valid piece to move under the current check state.
-					if (moves.size() != 0) {
+					if (validMovements.size() != 0) {
 						Chess_Piece_Node newNode;
 						newNode.piece = currPiece;
-						newNode.validMoves = moves;
-						validPiecesToMoveDuringCheckBlack.push_back(newNode);
+						newNode.validMoves = validMovements;
+						validPiecesToMoveDuringCheckWhite.push_back(newNode);
 					}
 				}
 
