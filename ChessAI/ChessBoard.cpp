@@ -397,28 +397,26 @@ void ChessBoard::ProcessClickEvent(int x, int y)
 	else if (getCheckFlagWhite()) {
 		Chess_Piece_Node associatedNode;
 
-		if (piecePos[x][y]->GetSide() == curTurn) {
+		if (selectedPiece) {
 			bool isValidPieceSelected = false;
 
 			for (unsigned int i = 0; i < validPiecesToMoveDuringCheckWhite.size(); i++) {
-				if (selectedPiece) {
 					if (selectedPiece->GetX() == validPiecesToMoveDuringCheckWhite.at(i).piece->GetX() && selectedPiece->GetY() == validPiecesToMoveDuringCheckWhite.at(i).piece->GetY()) {
 						isValidPieceSelected = true;
 						associatedNode = validPiecesToMoveDuringCheckWhite.at(i);
 					}
-				}
-
 			}
-			if (isValidPieceSelected) {
+			if (!isValidPieceSelected) {
+				selectedPiece = nullptr;
+			}
+		}
+		else if (selectedPiece == nullptr) {
+			if (piecePos[x][y]->GetSide() == curTurn) {
 				selectedPiece = piecePos[x][y];
 			}
 			else {
 				selectedPiece = nullptr;
 			}
-
-		}
-		else {
-			selectedPiece = nullptr;
 		}
 
 
