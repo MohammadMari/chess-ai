@@ -509,10 +509,15 @@ vector<Pos> Pawn::PossibleMoves(ChessPiece*** board, SIDE pieceColor)
 
 	if (Up2.size()) {
 		if (!this->isMoved) {
-			SIDE PosSide = board[Up.front().x][Up.front().y]->GetSide();
-			if (PosSide == NONE) {
+			SIDE PosSide1 = board[Up2.front().x][Up2.front().y]->GetSide();
+			SIDE PosSide2 = board[Up2.back().x][Up2.back().y]->GetSide();
+			if (PosSide1 == NONE) {
+				PossibleMove = Up;
+			}
+			if (PosSide2 == NONE) {
 				PossibleMove = Up2;
 			}
+			
 		}
 	}
 
