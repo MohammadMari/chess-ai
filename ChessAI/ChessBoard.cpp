@@ -594,15 +594,14 @@ void ChessBoard::checkHandlerWhite() {
 							}
 						}
 
-						//this is commented out. This criteria is not possible I believe, so there is no need to check it.
 
-					//	//there must only be one black piece checking the white king for a check to be able to be "Uplifted.".
-					//	if (blackPiecesChecking.size() == 1) {
-					//		//if this move represents a move where the checking piece can get killed, mark this also as a valid move. The black piece will be at the first index so no need to determine the index.
-					//		if ((currMove.x == blackPiecesChecking.at(0)->GetX()) && (currMove.y == blackPiecesChecking.at(0)->GetY())) {
-					//			isMoveElementValid.at(k) = true;
-					//		}
-					//	}
+						//there must only be one black piece checking the white king for a check to be able to be "Uplifted.".
+						if (blackPiecesChecking.size() == 1) {
+							//if this move represents a move where the checking piece can get killed, mark this also as a valid move. The black piece will be at the first index so no need to determine the index.
+							if ((currMove.x == blackPiecesChecking.at(0)->GetX()) && (currMove.y == blackPiecesChecking.at(0)->GetY())) {
+								isMoveElementValid.at(k) = true;
+							}
+						}
 					}
 
 					vector<Pos> validMovements;
@@ -790,14 +789,13 @@ void ChessBoard::checkHandlerBlack() {
 							}
 						}
 
-						//do not think this is a possibility, so no need to check for it.
 						////there must only be one black piece checking the white king for a check to be able to be "Uplifted.".
-						//if (whitePiecesChecking.size() == 1) {
-						//	//if this move represents a move where the checking piece can get killed, mark this also as a valid move. The black piece will be at the first index so no need to determine the index.
-						//	if ((currMove.x == whitePiecesChecking.at(0)->GetX()) && (currMove.y == whitePiecesChecking.at(0)->GetY())) {
-						//		isMoveElementValid.at(k) = true;
-						//	}
-						//}
+						if (whitePiecesChecking.size() == 1) {
+							//if this move represents a move where the checking piece can get killed, mark this also as a valid move. The black piece will be at the first index so no need to determine the index.
+							if ((currMove.x == whitePiecesChecking.at(0)->GetX()) && (currMove.y == whitePiecesChecking.at(0)->GetY())) {
+								isMoveElementValid.at(k) = true;
+							}
+						}
 					}
 					vector<Pos> validMovements;
 
