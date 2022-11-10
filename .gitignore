@@ -50,3 +50,4 @@
 # Folder for dependencies
 .vs/
 SFML-2.5.1/
+*.cmake

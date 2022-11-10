@@ -16,8 +16,17 @@ int main()
 		while (window.pollEvent(event))
 		{
 			// "close requested" event: we close the window
-			if (event.type == sf::Event::Closed)
+			if (event.type == sf::Event::Closed) {
 				window.close();
+			}
+
+			if (event.type == Event::MouseButtonPressed) {
+				if (event.mouseButton.button == Mouse::Left) {
+					cout << "mouse x:" << event.mouseButton.x << endl;
+					cout << "mouse y:" << event.mouseButton.y << endl;
+					board.ProcessClickEvent(event.mouseButton.x, event.mouseButton.y);
+				}
+			}
 		}
 
 		board.DisplayBoard(window);
