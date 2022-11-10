@@ -1,5 +1,6 @@
+@@ -0,0 +1,51 @@
 # Prerequisites
-*.d
+*.d  
 
 # Compiled Object files
 *.slo
@@ -30,7 +31,6 @@
 *.exe
 *.out
 *.app
-ChessAI/.vs/ChessAI/v16/.suo
 *.db
 *.db-shm
 *.db-wal
@@ -46,3 +46,7 @@ ChessAI/.vs/ChessAI/v16/.suo
 *.txt
 *.iobj
 *.idb
+
+# Folder for dependencies
+.vs/
+SFML-2.5.1/
