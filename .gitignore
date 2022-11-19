@@ -51,3 +51,22 @@
 .vs/
 SFML-2.5.1/
 *.cmake
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.sln
+*.filters
+*.user
+
+# Stokfish Files
+# Files from build
+**/*.o
+**/*.s
+ChessAI/CNN/Python/Stockfish/src/.depend
+
+# Built binary
+ChessAI/CNN/Python/Stockfish/src/stockfish*
+ChessAI/CNN/Python/Stockfish/src/-lstdc++.res
+
+# Neural network for the NNUE evaluation
+**/*.nnue
