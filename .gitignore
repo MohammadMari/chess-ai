@@ -70,3 +70,5 @@ ChessAI/CNN/Python/Stockfish/src/-lstdc++.res
 
 # Neural network for the NNUE evaluation
 **/*.nnue
+*.vcxproj
+ChessAI/ChessAI.vcxproj
