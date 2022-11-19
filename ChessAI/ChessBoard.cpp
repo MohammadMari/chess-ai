@@ -1,6 +1,44 @@
 #include "ChessBoard.h"
 
 
+// transforms the board we have into a 3d array.
+// we feed this into tensorflow.
+vector<vector<vector<int>>> convert(ChessPiece*** board) {
+
+	vector<vector<vector<int>>> arr;
+
+	// im throwing hands with whoever said we should use C++ for this
+	for (int i = 0; i < 14; i++) {
+		vector<vector<int>> temp14;
+		for (int j = 0; j < 8; j++) {
+			vector<int> temp8;
+			for (int k = 0; k < 8; k++) {
+				temp8.push_back(0);
+			}
+			temp14.push_back(temp8);
+		}
+		arr.push_back(temp14);
+	}
+
+
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			int num = board[i][j]->getPieceType() + ((board[i][j]->GetSide() == BLACK ? 1 : 0) * 7); // piece type white += 0, black += 7
+			arr[num][i][j] = 1; // piece is in this spot.
+
+			vector<Pos> moves = board[i][j]->PossibleMoves(board, board[i][j]->GetSide()); //get all possible moves
+
+			int possibleMovesForSide = board[i][j]->GetSide() == BLACK ? 12 : 13; //all possible moves will be contained in 12 and 13 index
+			for (Pos move : moves) {
+				arr[possibleMovesForSide][move.x][move.y] = 1;
+			}
+		}
+	}
+
+	return arr;
+}
+
+
 // okay maybe I should have put this in chess piece and fed it the pos that we already have c:
 // its a later problem c:
 string NodeLabel(Pos pos) {
@@ -286,13 +324,6 @@ void ChessBoard::DisplayBoard(RenderWindow &window)
 		whiteCheck.setPosition(Vector2f(150, 550));
 		window.draw(whiteCheck);
 	}
-
-
-
-
-
-
-
 }
 
 void ChessBoard::ProcessClickEvent(int x, int y)
