@@ -25,7 +25,6 @@ def DrawBoard():
             pygame.draw.rect(screen, col, pygame.Rect((i * SQUARE_SIZE), (j * SQUARE_SIZE), SQUARE_SIZE, SQUARE_SIZE))
 
 def DrawPossibleMoves():
-    piece = board.piece_at(chess.SQUARES[selectedpiece[0] + (selectedpiece[1] * 8)])
     all_moves = list(board.legal_moves)
     tomove = []
 
@@ -48,7 +47,8 @@ def DrawPieces():
             if piece != None:
                 piecesvg = io.BytesIO(chess.svg.piece(chess.Piece.from_symbol(piece.symbol())).encode())
                 image = pygame.image.load(piecesvg)
-                screen.blit(image,(i * SQUARE_SIZE,j * SQUARE_SIZE))
+                image = pygame.transform.smoothscale(image, (40,40))
+                screen.blit(image,(i * SQUARE_SIZE + 15,j * SQUARE_SIZE + 15))
 
 
 def ProcessClick(selectedpiece):
@@ -67,6 +67,26 @@ def ProcessClick(selectedpiece):
         pos = pygame.mouse.get_pos()
         x = int(pos[0] / SQUARE_SIZE)
         y = int(pos[1] / SQUARE_SIZE)
+
+        all_moves = list(board.legal_moves)
+        tomove = []
+
+        for move in all_moves:
+            if move.from_square == selectedpiece[0] + (selectedpiece[1] * 8):
+                tomove.append(move)
+
+        
+        for move in tomove:
+            xMove = move.to_square % 8
+            yMove = (move.to_square - xMove) / 8
+            
+        
+            if xMove == x and yMove == y:
+                frompos = str(chess.SQUARE_NAMES[selectedpiece[0] + (selectedpiece[1] * 8)])
+                topos = str(chess.SQUARE_NAMES[x + (y * 8)])        
+                print(frompos + topos)
+                fromucimove = chess.Move.from_uci(frompos + topos)
+                board.push(fromucimove)
         pass
             
 
@@ -76,7 +96,6 @@ while True:
             quit()
         if event.type == pygame.MOUSEBUTTONDOWN:
             selectedpiece = ProcessClick(selectedpiece)
-
 
     DrawBoard()
     if selectedpiece != None:
