@@ -210,6 +210,11 @@ void ChessBoard::DisplayBoard(RenderWindow &window)
 
 	//if black is in check, could either be check or checkmate(White Wins).
 	if (getCheckFlagBlack()) {
+
+		if (GetcurTurn() != BLACK) {
+			this->isCheckMateOnBlack = true;
+		}
+
 		//updates container of valid piecees to move with their valid moves when in check state.
 		checkHandlerBlack();
 
@@ -268,6 +273,10 @@ void ChessBoard::DisplayBoard(RenderWindow &window)
 
 	//if white is in check, could either be check or checkmate(Black Wins).
 	if (getCheckFlagWhite()) {
+		
+		if (GetcurTurn() != WHITE) {
+			this->isCheckMateOnWhite = true;
+		}
 
 		//updates container of valid piecees to move with their valid moves when in check state.
 		checkHandlerWhite();
