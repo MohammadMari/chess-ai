@@ -497,6 +497,8 @@ vector<Pos> Pawn::PossibleMoves(ChessPiece*** board, SIDE pieceColor)
 		Up = MoveHelper(1, i, j, 0, side, board),
 		Up2 = MoveHelper(2, i, j, 0, side, board);
 
+	this->setCheckStatusForPiece(false);
+
 	if (Up.size()) {
 		if (this->isMoved) {
 			SIDE PosSide = board[Up.front().x][Up.front().y]->GetSide();
@@ -523,6 +525,7 @@ vector<Pos> Pawn::PossibleMoves(ChessPiece*** board, SIDE pieceColor)
 
 	if (!UpRight.empty()) {
 		SIDE PosSide = board[UpRight.front().x][UpRight.front().y]->GetSide();
+
 		if (PosSide != NONE && PosSide != this->pieceSide) {
 			PossibleMove.insert(PossibleMove.end(), UpRight.begin(), UpRight.end());
 		}
@@ -536,6 +539,31 @@ vector<Pos> Pawn::PossibleMoves(ChessPiece*** board, SIDE pieceColor)
 		}
 	}
 	
+	int x1, x2;
+	int y1, y2;
+
+	x1 = this->GetX() - 1;
+	y1 = this->GetY() + side;
+	x2 = this->GetX() + 1;
+	y2 = this->GetY() + side;
+
+	if (inBounds(x1) && inBounds(x2) && inBounds(y1) && inBounds(y2)) {
+		ChessPiece* upLeftNode = board[this->GetX() - 1][this->GetY() + side];
+		ChessPiece* upRightNode = board[this->GetX() + 1][this->GetY() + side];
+
+		if (upLeftNode->GetSide() != this->GetSide()) {
+			if (upLeftNode->getPieceType() == KING) {
+				setCheckStatusForPiece(true);
+			}
+		}
+
+		if (upRightNode->GetSide() != this->GetSide()) {
+			if (upRightNode->getPieceType() == KING) {
+				setCheckStatusForPiece(true);
+			}
+		}
+	}
+
 
 	return PossibleMove;
 }
