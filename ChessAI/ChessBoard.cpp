@@ -1,7 +1,7 @@
 #include "ChessBoard.h"
-
-
 // transforms the board we have into a 3d array.
+
+
 // we feed this into tensorflow.
 vector<vector<vector<int>>> convert(ChessPiece*** board) {
 
@@ -496,7 +496,7 @@ void ChessBoard::determineIfAnyCheck() {
 	for (unsigned int i = 0; i < 8; i++) {
 		for (unsigned int j = 0; j < 8; j++) {
 			if (piecePos[i][j]->getPieceType() != INVALID) {
-				piecePos[i][j]->PossibleMoves(piecePos);
+					piecePos[i][j]->PossibleMoves(piecePos);			
 			}
 		}
 	}
@@ -689,36 +689,36 @@ void ChessBoard::checkHandlerWhite() {
 								isMoveElementValid.at(k) = false;
 							}
 						}
-							//now checking second criteria.
+						//now checking second criteria.
 							
-						//Pos position;
-						//position.x = piecePos[i][j]->GetX();
-						//position.y = piecePos[i][j]->GetY();
+						Pos position;
+						position.x = piecePos[i][j]->GetX();
+						position.y = piecePos[i][j]->GetY();
 
+						
+						ChessPiece* nodeToReplace = piecePos[currMove.x][currMove.y];
+						piecePos[currMove.x][currMove.y] = piecePos[i][j];
+						piecePos[currMove.x][currMove.y]->SetX(currMove.x);
+						piecePos[currMove.x][currMove.y]->SetY(currMove.x);
+						piecePos[i][j] = nodeToReplace;
+						nodeToReplace->SetX(position.x);
+						nodeToReplace->SetY(position.y);
 
-						//ChessPiece* nodeToReplace = piecePos[currMove.x][currMove.y];
-						//piecePos[currMove.x][currMove.y] = piecePos[i][j];
-						//piecePos[currMove.x][currMove.y]->SetX(currMove.x);
-						//piecePos[currMove.x][currMove.y]->SetY(currMove.x);
-						//piecePos[i][j] = nodeToReplace;
-						//nodeToReplace->SetX(position.x);
-						//nodeToReplace->SetY(position.y);
+						determineIfAnyCheck();
 
-						//determineIfAnyCheck();
+						if (getCheckFlagWhite()) {
+							isMoveElementValid.at(k) = false;
+						}
 
-						//if (getCheckFlagBlack()) {
-						//	isMoveElementValid.at(k) = false;
-						//}
+						nodeToReplace = piecePos[i][j];
+						piecePos[i][j] = piecePos[currMove.x][currMove.y];
+						piecePos[i][j]->SetX(position.x);
+						piecePos[i][j]->SetY(position.y);
+						piecePos[currMove.x][currMove.y] = nodeToReplace;
+						piecePos[currMove.x][currMove.y]->SetX(currMove.x);
+						piecePos[currMove.x][currMove.y]->SetY(currMove.y);
 
-						//nodeToReplace = piecePos[i][j];
-						//piecePos[i][j] = piecePos[currMove.x][currMove.y];
-						//piecePos[i][j]->SetX(position.x);
-						//piecePos[i][j]->SetY(position.y);
-						//piecePos[currMove.x][currMove.y] = nodeToReplace;
-						//piecePos[currMove.x][currMove.y]->SetX(currMove.x);
-						//piecePos[currMove.x][currMove.y]->SetY(currMove.y);
-
-						//determineIfAnyCheck();
+						determineIfAnyCheck();
 
 					}
 
@@ -883,34 +883,34 @@ void ChessBoard::checkHandlerBlack() {
 							}
 						}
 
-							//Pos position;
-							//position.x = piecePos[i][j]->GetX();
+							Pos position;
+							position.x = piecePos[i][j]->GetX();
 							//position.y = piecePos[i][j]->GetY();
 
 
-							//ChessPiece* nodeToReplace = piecePos[currMove.x][currMove.y];
-							//piecePos[currMove.x][currMove.y] = piecePos[i][j];
-							//piecePos[currMove.x][currMove.y]->SetX(currMove.x);
-							//piecePos[currMove.x][currMove.y]->SetY(currMove.x);
-							//piecePos[i][j] = nodeToReplace;
-							//nodeToReplace->SetX(position.x);
-							//nodeToReplace->SetY(position.y);
+							ChessPiece* nodeToReplace = piecePos[currMove.x][currMove.y];
+							piecePos[currMove.x][currMove.y] = piecePos[i][j];
+							piecePos[currMove.x][currMove.y]->SetX(currMove.x);
+							piecePos[currMove.x][currMove.y]->SetY(currMove.x);
+							piecePos[i][j] = nodeToReplace;
+							nodeToReplace->SetX(position.x);
+							nodeToReplace->SetY(position.y);
 
-							//determineIfAnyCheck();
+							determineIfAnyCheck();
 
-							//if (getCheckFlagBlack()) {
-							//	isMoveElementValid.at(k) = false;
-							//}
+							if (getCheckFlagBlack()) {
+								isMoveElementValid.at(k) = false;
+							}
 
-							//nodeToReplace = piecePos[i][j];
-							//piecePos[i][j] = piecePos[currMove.x][currMove.y];
-							//piecePos[i][j]->SetX(position.x);
-							//piecePos[i][j]->SetY(position.y);
-							//piecePos[currMove.x][currMove.y] = nodeToReplace;
-							//piecePos[currMove.x][currMove.y]->SetX(currMove.x);
-							//piecePos[currMove.x][currMove.y]->SetY(currMove.y);
+							nodeToReplace = piecePos[i][j];
+							piecePos[i][j] = piecePos[currMove.x][currMove.y];
+							piecePos[i][j]->SetX(position.x);
+							piecePos[i][j]->SetY(position.y);
+							piecePos[currMove.x][currMove.y] = nodeToReplace;
+							piecePos[currMove.x][currMove.y]->SetX(currMove.x);
+							piecePos[currMove.x][currMove.y]->SetY(currMove.y);
 
-							//determineIfAnyCheck();
+							determineIfAnyCheck();
 
 					}
 					vector<Pos> validMovements;
