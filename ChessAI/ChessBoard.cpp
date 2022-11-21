@@ -75,14 +75,15 @@ ChessBoard::ChessBoard()
 		}
 	}
 
-	free(piecePos[0][0]);
-	free(piecePos[1][0]);
-	free(piecePos[2][0]);
-	free(piecePos[3][0]);
-	free(piecePos[4][0]);
-	free(piecePos[5][0]);
-	free(piecePos[6][0]);
-	free(piecePos[7][0]);
+
+	delete piecePos[0][0];
+	delete piecePos[1][0];
+	delete piecePos[2][0];
+	delete piecePos[3][0];
+	delete piecePos[4][0];
+	delete piecePos[5][0];
+	delete piecePos[6][0];
+	delete piecePos[7][0];
 
 	piecePos[0][0] = new Rook(BLACK, Pos(0, 0), NodeLabel(Pos(0,0)));
 	piecePos[1][0] = new Knight(BLACK, Pos(1, 0), NodeLabel(Pos(1, 0)));
@@ -94,21 +95,21 @@ ChessBoard::ChessBoard()
 	piecePos[7][0] = new Rook(BLACK, Pos(7, 0), NodeLabel(Pos(7, 0)));
 
 	for (int i = 0; i < 8; i++) {
-		free(piecePos[i][1]);
-		free(piecePos[i][6]);
+		delete piecePos[i][1];
+		delete piecePos[i][6];
 		piecePos[i][1] = new Pawn(BLACK, Pos(i, 1), NodeLabel(Pos(i, 1)));
 		piecePos[i][6] = new Pawn(WHITE, Pos(i, 6), NodeLabel(Pos(i, 6)));
 	}
 
 
-	free(piecePos[0][7]);
-	free(piecePos[1][7]);
-	free(piecePos[2][7]);
-	free(piecePos[3][7]);
-	free(piecePos[4][7]);
-	free(piecePos[5][7]);
-	free(piecePos[6][7]);
-	free(piecePos[7][7]);
+	delete piecePos[0][7];
+	delete piecePos[1][7];
+	delete piecePos[2][7];
+	delete piecePos[3][7];
+	delete piecePos[4][7];
+	delete piecePos[5][7];
+	delete piecePos[6][7];
+	delete piecePos[7][7];
 
 	piecePos[0][7] = new Rook(WHITE, Pos(0, 7), NodeLabel(Pos(0, 7)));
 	piecePos[1][7] = new Knight(WHITE, Pos(1, 7), NodeLabel(Pos(1, 7)));
@@ -350,7 +351,7 @@ void ChessBoard::ProcessClickEvent(int x, int y)
 
 				// if it is in the possible move, move your piece over to that spot.
 				if (pos.x == x && pos.y == y) {
-					free(piecePos[x][y]);
+					delete piecePos[x][y];
 					piecePos[x][y] = piecePos[selectedPiece->GetX()][selectedPiece->GetY()];
 					piecePos[selectedPiece->GetX()][selectedPiece->GetY()] = new Empty(Pos(selectedPiece->GetX(), selectedPiece->GetY()), NodeLabel(Pos(selectedPiece->GetX(), selectedPiece->GetY())));
 					selectedPiece->isMoved = true;
@@ -410,7 +411,7 @@ void ChessBoard::ProcessClickEvent(int x, int y)
 
 				// if it is in the possible move, move your piece over to that spot.
 				if (pos.x == x && pos.y == y) {
-					free(piecePos[x][y]);
+					delete piecePos[x][y];
 					piecePos[x][y] = piecePos[selectedPiece->GetX()][selectedPiece->GetY()];
 					piecePos[selectedPiece->GetX()][selectedPiece->GetY()] = new Empty(Pos(selectedPiece->GetX(), selectedPiece->GetY()), NodeLabel(Pos(selectedPiece->GetX(), selectedPiece->GetY())));
 					selectedPiece->isMoved = true;
@@ -466,7 +467,7 @@ void ChessBoard::ProcessClickEvent(int x, int y)
 
 				// if it is in the possible move, move your piece over to that spot.
 				if (pos.x == x && pos.y == y) {
-					free(piecePos[x][y]);
+					delete piecePos[x][y];
 					piecePos[x][y] = piecePos[selectedPiece->GetX()][selectedPiece->GetY()];
 					piecePos[selectedPiece->GetX()][selectedPiece->GetY()] = new Empty(Pos(selectedPiece->GetX(), selectedPiece->GetY()), NodeLabel(Pos(selectedPiece->GetX(), selectedPiece->GetY())));
 					selectedPiece->isMoved = true;
@@ -695,30 +696,61 @@ void ChessBoard::checkHandlerWhite() {
 						position.x = piecePos[i][j]->GetX();
 						position.y = piecePos[i][j]->GetY();
 
-						
+
 						ChessPiece* nodeToReplace = piecePos[currMove.x][currMove.y];
-						piecePos[currMove.x][currMove.y] = piecePos[i][j];
-						piecePos[currMove.x][currMove.y]->SetX(currMove.x);
-						piecePos[currMove.x][currMove.y]->SetY(currMove.x);
-						piecePos[i][j] = nodeToReplace;
-						nodeToReplace->SetX(position.x);
-						nodeToReplace->SetY(position.y);
 
-						determineIfAnyCheck();
+						if (nodeToReplace->GetSide() != BLACK) {
+							piecePos[currMove.x][currMove.y] = piecePos[i][j];
+							piecePos[currMove.x][currMove.y]->SetX(currMove.x);
+							piecePos[currMove.x][currMove.y]->SetY(currMove.x);
+							piecePos[i][j] = nodeToReplace;
+							nodeToReplace->SetX(position.x);
+							nodeToReplace->SetY(position.y);
 
-						if (getCheckFlagWhite()) {
-							isMoveElementValid.at(k) = false;
+							determineIfAnyCheck();
+
+							if (getCheckFlagBlack()) {
+								isMoveElementValid.at(k) = false;
+							}
+
+							nodeToReplace = piecePos[i][j];
+							piecePos[i][j] = piecePos[currMove.x][currMove.y];
+							piecePos[i][j]->SetX(position.x);
+							piecePos[i][j]->SetY(position.y);
+							piecePos[currMove.x][currMove.y] = nodeToReplace;
+							piecePos[currMove.x][currMove.y]->SetX(currMove.x);
+							piecePos[currMove.x][currMove.y]->SetY(currMove.y);
+
+							determineIfAnyCheck();
 						}
+						else {
+							piecePos[currMove.x][currMove.y] = piecePos[i][j];
+							piecePos[currMove.x][currMove.y]->SetX(currMove.x);
+							piecePos[currMove.x][currMove.y]->SetY(currMove.x);
 
-						nodeToReplace = piecePos[i][j];
-						piecePos[i][j] = piecePos[currMove.x][currMove.y];
-						piecePos[i][j]->SetX(position.x);
-						piecePos[i][j]->SetY(position.y);
-						piecePos[currMove.x][currMove.y] = nodeToReplace;
-						piecePos[currMove.x][currMove.y]->SetX(currMove.x);
-						piecePos[currMove.x][currMove.y]->SetY(currMove.y);
+							Pos emptyPos(position.x, position.y);
 
-						determineIfAnyCheck();
+							Empty* newEmpty = new Empty(emptyPos, NodeLabel(emptyPos));
+
+							piecePos[i][j] = newEmpty;
+
+							determineIfAnyCheck();
+
+							if (getCheckFlagBlack()) {
+								isMoveElementValid.at(k) = false;
+							}
+
+							delete newEmpty;
+
+							piecePos[i][j] = piecePos[currMove.x][currMove.y];
+							piecePos[i][j]->SetX(position.x);
+							piecePos[i][j]->SetY(position.y);
+							piecePos[currMove.x][currMove.y] = nodeToReplace;
+							piecePos[currMove.x][currMove.y]->SetX(currMove.x);
+							piecePos[currMove.x][currMove.y]->SetY(currMove.y);
+
+							determineIfAnyCheck();
+						}
 
 					}
 
@@ -889,28 +921,61 @@ void ChessBoard::checkHandlerBlack() {
 
 
 							ChessPiece* nodeToReplace = piecePos[currMove.x][currMove.y];
-							piecePos[currMove.x][currMove.y] = piecePos[i][j];
-							piecePos[currMove.x][currMove.y]->SetX(currMove.x);
-							piecePos[currMove.x][currMove.y]->SetY(currMove.x);
-							piecePos[i][j] = nodeToReplace;
-							nodeToReplace->SetX(position.x);
-							nodeToReplace->SetY(position.y);
+							
+							if (nodeToReplace->GetSide() != WHITE) {
+								piecePos[currMove.x][currMove.y] = piecePos[i][j];
+								piecePos[currMove.x][currMove.y]->SetX(currMove.x);
+								piecePos[currMove.x][currMove.y]->SetY(currMove.x);
+								piecePos[i][j] = nodeToReplace;
+								nodeToReplace->SetX(position.x);
+								nodeToReplace->SetY(position.y);
 
-							determineIfAnyCheck();
+								determineIfAnyCheck();
 
-							if (getCheckFlagBlack()) {
-								isMoveElementValid.at(k) = false;
+								if (getCheckFlagBlack()) {
+									isMoveElementValid.at(k) = false;
+								}
+
+								nodeToReplace = piecePos[i][j];
+								piecePos[i][j] = piecePos[currMove.x][currMove.y];
+								piecePos[i][j]->SetX(position.x);
+								piecePos[i][j]->SetY(position.y);
+								piecePos[currMove.x][currMove.y] = nodeToReplace;
+								piecePos[currMove.x][currMove.y]->SetX(currMove.x);
+								piecePos[currMove.x][currMove.y]->SetY(currMove.y);
+
+								determineIfAnyCheck();
+							}
+							else{
+								piecePos[currMove.x][currMove.y] = piecePos[i][j];
+								piecePos[currMove.x][currMove.y]->SetX(currMove.x);
+								piecePos[currMove.x][currMove.y]->SetY(currMove.x);
+								
+								Pos emptyPos(position.x, position.y);
+
+								Empty* newEmpty = new Empty(emptyPos, NodeLabel(emptyPos));
+
+								piecePos[i][j] = newEmpty;
+
+								determineIfAnyCheck();
+
+								if (getCheckFlagBlack()) {
+									isMoveElementValid.at(k) = false;
+								}
+
+								delete newEmpty;
+
+								piecePos[i][j] = piecePos[currMove.x][currMove.y];
+								piecePos[i][j]->SetX(position.x);
+								piecePos[i][j]->SetY(position.y);
+								piecePos[currMove.x][currMove.y] = nodeToReplace;
+								piecePos[currMove.x][currMove.y]->SetX(currMove.x);
+								piecePos[currMove.x][currMove.y]->SetY(currMove.y);
+
+								determineIfAnyCheck();
 							}
 
-							nodeToReplace = piecePos[i][j];
-							piecePos[i][j] = piecePos[currMove.x][currMove.y];
-							piecePos[i][j]->SetX(position.x);
-							piecePos[i][j]->SetY(position.y);
-							piecePos[currMove.x][currMove.y] = nodeToReplace;
-							piecePos[currMove.x][currMove.y]->SetX(currMove.x);
-							piecePos[currMove.x][currMove.y]->SetY(currMove.y);
 
-							determineIfAnyCheck();
 
 					}
 					vector<Pos> validMovements;
