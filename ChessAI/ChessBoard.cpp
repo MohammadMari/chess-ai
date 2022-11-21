@@ -885,7 +885,7 @@ void ChessBoard::checkHandlerBlack() {
 
 							Pos position;
 							position.x = piecePos[i][j]->GetX();
-							//position.y = piecePos[i][j]->GetY();
+							position.y = piecePos[i][j]->GetY();
 
 
 							ChessPiece* nodeToReplace = piecePos[currMove.x][currMove.y];
