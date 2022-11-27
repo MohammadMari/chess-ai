@@ -2,9 +2,7 @@ from tensorflow.keras import models
 import numpy as np
 from CNN.dataPrep import split_dims
 
-
 model = models.load_model('./CNN/Models/model02.h5')
-
 
 def minmax_eval(board):
    # board3d = numpy.zeros((14, 8, 8), dtype=numpy.int8)
@@ -20,6 +18,10 @@ def minimax(board, depth, alpha, beta, maximizing_player):
     max_eval = -np.inf
     for move in board.legal_moves:
       board.push(move)
+      # right here
+      # make a list, compare with things of similar depth
+      # if its like top 50% go ahead, if not just return.
+
       eval = minimax(board, depth - 1, alpha, beta, False)
       board.pop()
       max_eval = max(max_eval, eval)
