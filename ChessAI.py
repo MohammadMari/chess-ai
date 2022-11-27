@@ -3,6 +3,7 @@ import pygame
 import numpy as np
 import chess.svg
 import io
+from AI_Player import get_ai_move
 
 pygame.init()
 
@@ -88,6 +89,13 @@ def ProcessClick(selectedpiece):
                 fromucimove = chess.Move.from_uci(frompos + topos)
                 board.push(fromucimove)
         pass
+    
+def CheckStatus():
+    if board.is_stalemate():
+        return "STALEMATE"
+    if board.is_insufficient_material():
+        return "INSUFF"
+    return board.outcome()
             
 
 while True:
@@ -103,3 +111,15 @@ while True:
     DrawPieces()    
     pygame.display.flip()
     surface = pygame.Surface((width,height), pygame.SRCALPHA)
+    
+    # Checking for game completeion
+    outcome = CheckStatus()
+    if outcome:
+        # NEED TO UPDATE ALL THESE PRINTS TO DISPLAY TEXT ON GAME SCREEN
+        # Winner = True means white won, false black won
+        if outcome == "STALEMATE":
+            print('Stalemate')
+        if outcome == "INSUFF":
+            print("Insufficient Materials")
+        if outcome.termination:
+            print(outcome)
