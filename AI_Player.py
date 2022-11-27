@@ -1,14 +1,15 @@
 from tensorflow.keras import models
 import numpy as np
-from CNN.CNNModel import split_dims
+from CNN.dataPrep import split_dims
 
 
 model = models.load_model('./CNN/Models/model02.h5')
 
 
 def minmax_eval(board):
-   board3D = split_dims(board)
-   board3D = np.expand_dims(board3d, 0)
+   # board3d = numpy.zeros((14, 8, 8), dtype=numpy.int8)
+   board3d = split_dims(board)
+   board3d = np.expand_dims(board3d, 0)
    return model(board3d)[0][0]
 
 def minimax(board, depth, alpha, beta, maximizing_player):

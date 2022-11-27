@@ -72,3 +72,4 @@ ChessAI/CNN/Python/Stockfish/src/-lstdc++.res
 **/*.nnue
 *.vcxproj
 ChessAI/ChessAI.vcxproj
+*.pyc

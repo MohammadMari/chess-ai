@@ -112,6 +112,13 @@ while True:
     pygame.display.flip()
     surface = pygame.Surface((width,height), pygame.SRCALPHA)
     
+    # Getting whose turn
+    # print(board.turn) True = White False = Black
+    if board.turn is False:
+        move = get_ai_move(board, 1)
+        print("AI does: ", move)
+        
+    
     # Checking for game completeion
     outcome = CheckStatus()
     if outcome:
