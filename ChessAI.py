@@ -112,15 +112,6 @@ while True:
     pygame.display.flip()
     surface = pygame.Surface((width,height), pygame.SRCALPHA)
     
-    # Getting whose turn
-    # print(board.turn) True = White False = Black
-    if board.turn is False:
-        move = get_ai_move(board, 3)
-        Nf3 = chess.Move.from_uci(str(move))
-        board.push(Nf3)  # Make the move
-        print("AI does: ", move)
-        
-    
     # Checking for game completeion
     outcome = CheckStatus()
     if outcome:
@@ -132,3 +123,11 @@ while True:
             print("Insufficient Materials")
         if outcome.termination:
             print(outcome)
+    
+    # Getting whose turn
+    # print(board.turn) True = White False = Black
+    if board.turn is False and outcome == None:
+        move = get_ai_move(board, 1)
+        Nf3 = chess.Move.from_uci(str(move))
+        board.push(Nf3)  # Make the move
+        print("AI does: ", move)

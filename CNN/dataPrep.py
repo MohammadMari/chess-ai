@@ -93,7 +93,7 @@ def main():
       board_list.append(np_arr)
       score_list.append(score)
    
-   # Saviing the np list of np arrays to file
+   # Saving the np list of np arrays to file
    np.savez('Dataset02', b=board_list, s=score_list)
    print('Dataset Created.')
        

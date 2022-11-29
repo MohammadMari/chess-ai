@@ -23,6 +23,10 @@ def get_dataset(fn):
 	s = np.asarray(s / abs(s).max() / 2 + 0.5, dtype=np.float32) # normalization (0 - 1)
 	return b, s
 
+def get_model_summary():
+  model = build_model(32, 4)
+  return model.summary()
+
 def main():
    print('Building Model')
    model = build_model(32, 4)
