@@ -2,7 +2,7 @@ from tensorflow.keras import models
 import numpy as np
 from CNN.dataPrep import split_dims
 
-model = models.load_model('./CNN/Models/model02.h5')
+model = models.load_model('./CNN/Models/Black/blackModel01.h5')
 
 def minmax_eval(board):
    # board3d = numpy.zeros((14, 8, 8), dtype=numpy.int8)
@@ -22,10 +22,10 @@ def minimax(board, depth, alpha, beta, maximizing_player):
       # make a list, compare with things of similar depth
       # if its like top 50% go ahead, if not just return.
 
-      eval = minimax(board, depth - 1, alpha, beta, False)
+      calc = minimax(board, depth - 1, alpha, beta, False)
       board.pop()
-      max_eval = max(max_eval, eval)
-      alpha = max(alpha, eval)
+      max_eval = max(max_eval, calc)
+      alpha = max(alpha, calc)
       if beta <= alpha:
         break
     return max_eval
@@ -33,10 +33,10 @@ def minimax(board, depth, alpha, beta, maximizing_player):
     min_eval = np.inf
     for move in board.legal_moves:
       board.push(move)
-      eval = minimax(board, depth - 1, alpha, beta, True)
+      calc = minimax(board, depth - 1, alpha, beta, True)
       board.pop()
-      min_eval = min(min_eval, eval)
-      beta = min(beta, eval)
+      min_eval = min(min_eval, calc)
+      beta = min(beta, calc)
       if beta <= alpha:
         break
     return min_eval
@@ -49,10 +49,10 @@ def get_ai_move(board, depth):
 
   for move in board.legal_moves:
     board.push(move)
-    eval = minimax(board, depth - 1, -np.inf, np.inf, False)
+    calc = minimax(board, depth - 1, -np.inf, np.inf, False)
     board.pop()
-    if eval > max_eval:
-      max_eval = eval
+    if calc > max_eval:
+      max_eval = calc
       max_move = move
   
   return max_move

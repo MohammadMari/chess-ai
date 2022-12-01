@@ -70,7 +70,7 @@ def split_dims(board):
 def stockfish_rater(board, depth):
    with chess.engine.SimpleEngine.popen_uci('Stockfish/src/stockfish') as sf:
       result = sf.analyse(board, chess.engine.Limit(depth=depth))
-      score = result['score'].white().score()
+      score = result['score'].black().score()
    return score
 
 # "C:/Users/tuffd/OneDrive/School/UNT/Fall_2022/Intro2AI/Project/chess-ai/ChessAI/CNN/Python/stockfish/13/bin/stockfish"
@@ -94,7 +94,7 @@ def main():
       score_list.append(score)
    
    # Saving the np list of np arrays to file
-   np.savez('Dataset02', b=board_list, s=score_list)
+   np.savez('DatasetBlack01', b=board_list, s=score_list)
    print('Dataset Created.')
        
 

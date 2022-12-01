@@ -1,4 +1,6 @@
 import chess
+import chess.engine
+import time
 import pygame
 import numpy as np
 import chess.svg
@@ -16,6 +18,8 @@ surface = pygame.Surface((width,height), pygame.SRCALPHA)
 
 board =  chess.Board()
 selectedpiece = None
+
+engine = chess.engine.SimpleEngine.popen_uci("./CNN/Stockfish/src/stockfish")
 
 def DrawBoard():
     for i in range(NUM_SQUARE):
@@ -98,40 +102,48 @@ def CheckStatus():
     return board.outcome()
             
 
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            quit()
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            selectedpiece = ProcessClick(selectedpiece)
 
-    DrawBoard()
-    if selectedpiece != None:
-        DrawPossibleMoves()
-    DrawPieces()    
-    pygame.display.flip()
-    surface = pygame.Surface((width,height), pygame.SRCALPHA)
-    
-    # Checking for game completeion
-    outcome = CheckStatus()
-    if outcome:
-        # NEED TO UPDATE ALL THESE PRINTS TO DISPLAY TEXT ON GAME SCREEN
-        # Winner = True means white won, false black won
-        if outcome == "STALEMATE":
-            print('Stalemate')
-        if outcome == "INSUFF":
-            print("Insufficient Materials")
-        if outcome.termination:
-            print(outcome)
-        
-        # Reset board and move stack
-        board.clear()
-        board.reset()
-    
-    # Getting whose turn
-    # board.turn; True = White; False = Black
-    if board.turn is False and outcome == None:
-        move = get_ai_move(board, 1)
-        Nf3 = chess.Move.from_uci(str(move))
-        board.push(Nf3)  # Make the move
-        print("AI does: ", move)
+while True:
+   for event in pygame.event.get():
+      if event.type == pygame.QUIT:
+         quit()
+      
+   DrawBoard()
+   DrawPieces()    
+   pygame.display.flip()
+   surface = pygame.Surface((width,height), pygame.SRCALPHA)
+   time.sleep(1)
+   
+   # Checking for game completeion
+   outcome = CheckStatus()
+   if outcome:
+      # NEED TO UPDATE ALL THESE PRINTS TO DISPLAY TEXT ON GAME SCREEN
+      # Winner = True means white won, false black won
+      if outcome == "STALEMATE":
+         print('Stalemate')
+      if outcome == "INSUFF":
+         print("Insufficient Materials")
+      if outcome.termination:
+         print(outcome)
+      
+      # Sleeping for 5 seconds
+      time.sleep(5)
+      
+      # Reset board and move stack
+      board.clear()
+      board.reset()
+   
+   # Getting our AI turn
+   # board.turn; True = White; False = Black
+   if board.turn is False and outcome == None:
+      move = get_ai_move(board, 1)
+      Nf3 = chess.Move.from_uci(str(move))
+      board.push(Nf3)  # Make the move
+      print("AI does: ", move)
+      
+   # Getting stockfish engine turn
+   elif board.turn is True and outcome == None:
+      result = engine.play(board, chess.engine.Limit(time=0.1))
+      board.push(result.move)  # Make the move
+      print("Stockfish does: ", result.move)
+      
