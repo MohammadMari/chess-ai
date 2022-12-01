@@ -2,6 +2,7 @@ import chess
 import chess.engine
 import time
 import pygame
+import random
 import numpy as np
 import chess.svg
 import io
@@ -18,6 +19,7 @@ surface = pygame.Surface((width,height), pygame.SRCALPHA)
 
 board =  chess.Board()
 selectedpiece = None
+firstMove = True
 
 engine = chess.engine.SimpleEngine.popen_uci("./CNN/Stockfish/src/stockfish")
 
@@ -55,44 +57,6 @@ def DrawPieces():
                 image = pygame.transform.smoothscale(image, (40,40))
                 screen.blit(image,(i * SQUARE_SIZE + 15,j * SQUARE_SIZE + 15))
 
-
-def ProcessClick(selectedpiece):
-    if selectedpiece == None:
-        pos = pygame.mouse.get_pos()
-        x = int(pos[0] / SQUARE_SIZE)
-        y = int(pos[1] / SQUARE_SIZE)
-        piece = board.piece_at(chess.SQUARES[x + (y * 8)])
-        sp = None
-        if piece != None:
-            sp = [x,y]
-        else:
-            sp = None
-        return sp
-    else:
-        pos = pygame.mouse.get_pos()
-        x = int(pos[0] / SQUARE_SIZE)
-        y = int(pos[1] / SQUARE_SIZE)
-
-        all_moves = list(board.legal_moves)
-        tomove = []
-
-        for move in all_moves:
-            if move.from_square == selectedpiece[0] + (selectedpiece[1] * 8):
-                tomove.append(move)
-
-        
-        for move in tomove:
-            xMove = move.to_square % 8
-            yMove = (move.to_square - xMove) / 8
-            
-        
-            if xMove == x and yMove == y:
-                frompos = str(chess.SQUARE_NAMES[selectedpiece[0] + (selectedpiece[1] * 8)])
-                topos = str(chess.SQUARE_NAMES[x + (y * 8)])        
-                print(frompos + topos)
-                fromucimove = chess.Move.from_uci(frompos + topos)
-                board.push(fromucimove)
-        pass
     
 def CheckStatus():
     if board.is_stalemate():
@@ -112,7 +76,14 @@ while True:
    DrawPieces()    
    pygame.display.flip()
    surface = pygame.Surface((width,height), pygame.SRCALPHA)
-   time.sleep(1)
+   
+   # Get first move as a random move (reduce repitition)
+   if firstMove:
+      firstMove = False
+      all_moves = list(board.legal_moves)
+      random_move = random.choice(all_moves)
+      board.push(random_move)
+      print('First Move: ', random_move)
    
    # Checking for game completeion
    outcome = CheckStatus()
@@ -125,6 +96,10 @@ while True:
          print("Insufficient Materials")
       if outcome.termination:
          print(outcome)
+         if outcome.winner:
+            print('White Wins!')
+         else:
+            print('Black Wins!')
       
       # Sleeping for 5 seconds
       time.sleep(5)
@@ -136,7 +111,7 @@ while True:
    # Getting our AI turn
    # board.turn; True = White; False = Black
    if board.turn is False and outcome == None:
-      move = get_ai_move(board, 1)
+      move = get_ai_move(board, 2)
       Nf3 = chess.Move.from_uci(str(move))
       board.push(Nf3)  # Make the move
       print("AI does: ", move)
@@ -146,4 +121,5 @@ while True:
       result = engine.play(board, chess.engine.Limit(time=0.1))
       board.push(result.move)  # Make the move
       print("Stockfish does: ", result.move)
+      time.sleep(1)
       

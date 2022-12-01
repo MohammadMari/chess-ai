@@ -123,6 +123,10 @@ while True:
             print("Insufficient Materials")
         if outcome.termination:
             print(outcome)
+            if outcome.winner:
+                print('White Wins!')
+            else:
+                print('Black Wins!')
         
         # Reset board and move stack
         board.clear()
