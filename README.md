@@ -12,3 +12,5 @@ This is a chess game written in C++ that will have an AI to play against (Curren
 In the ChessAI/CNN/Python there is a model made in python. This model was to be loaded into the C++ game but requires some changes.
 The data handeling into and from the model come from [Training a Chess AI using Tensorflow Article](https://medium.com/@nihalpuram/training-a-chess-ai-using-tensorflow-e795e1377af2). 
 Source Code from the Article: [Chess-AI-with-Tensorflow](https://github.com/realnihal/Chess-AI-with-TensorFlow).
+
+### Note: *This branch is still under development. As of right now the game is playable but does not have a working AI to play against. You can still play with your friends :)*
