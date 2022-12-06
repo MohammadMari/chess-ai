@@ -144,26 +144,25 @@ SIDE ChessBoard::SwapCurTurn()
 
 void ChessBoard::DisplayBoard(RenderWindow &window)
 {
-	RectangleShape boardSquare;
-	Color squareColor;
 
 	//updates the current status of check for white or black after each move is made. 
 	determineIfAnyCheck();
 
+	Texture board;
+	board.loadFromFile("sprites/Board.png");
+	Sprite boardImg;
+
+	boardImg.setTexture(board);
+	boardImg.setScale(Vector2f(0.515, 0.515));
+	boardImg.setPosition(Vector2f(0, 0));
 	
 
+
+	window.draw(boardImg);
 	// draw board and pieces
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {		
-			squareColor = (i + j) % 2 == 0 ? Color(238,238,213) : Color(125,148,93);
 
-			// set rectangle properties
-			boardSquare.setSize(Vector2f(75, 75));
-			boardSquare.setPosition(Vector2f(i * 75, j * 75));
-			boardSquare.setFillColor(squareColor);
-
-			// add rectangle to draw list
-			window.draw(boardSquare);
 
 
 
