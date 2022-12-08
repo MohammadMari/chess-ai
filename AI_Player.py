@@ -2,7 +2,7 @@ from tensorflow.keras import models
 import numpy as np
 from CNN.dataPrep import split_dims
 
-model = models.load_model('./CNN/Models/Black/blackModel01.h5')
+model = models.load_model('./CNN/Models/Black/blackModel02.h5')
 
 def minmax_eval(board):
    # board3d = numpy.zeros((14, 8, 8), dtype=numpy.int8)

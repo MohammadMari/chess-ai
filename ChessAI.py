@@ -135,7 +135,7 @@ while True:
     # Getting whose turn
     # board.turn; True = White; False = Black
     if board.turn is False and outcome == None:
-        move = get_ai_move(board, 1)
+        move = get_ai_move(board, 3)
         Nf3 = chess.Move.from_uci(str(move))
         board.push(Nf3)  # Make the move
         print("AI does: ", move)

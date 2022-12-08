@@ -76,7 +76,7 @@ def stockfish_rater(board, depth):
 # "C:/Users/tuffd/OneDrive/School/UNT/Fall_2022/Intro2AI/Project/chess-ai/ChessAI/CNN/Python/stockfish/13/bin/stockfish"
 
 def main():
-   iterations = 1000
+   iterations = 10000
    board_list = []
    score_list =[]
    for x in range(iterations):
@@ -94,7 +94,7 @@ def main():
       score_list.append(score)
    
    # Saving the np list of np arrays to file
-   np.savez('DatasetBlack01', b=board_list, s=score_list)
+   np.savez('DatasetBlack02', b=board_list, s=score_list)
    print('Dataset Created.')
        
 

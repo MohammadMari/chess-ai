@@ -33,7 +33,7 @@ def main():
    print('Model Built')
    
    print('Getting Dataset')
-   x_train, y_train = get_dataset('./Datasets/Black/DatasetBlack01.npz')
+   x_train, y_train = get_dataset('./Datasets/Black/DatasetBlack02.npz')
    x_train.transpose()
    print('x_train: ', x_train.shape)
    print('y_train: ', y_train.shape)
@@ -48,7 +48,7 @@ def main():
           verbose=1,
           validation_split=0.1)
    
-   model.save('blackModel01.h5')
+   model.save('blackModel02.h5')
    print('Model Saved as blackModel01.h5')
 
 if __name__ == "__main__":
